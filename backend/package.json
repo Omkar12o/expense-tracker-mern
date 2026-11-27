@@ -9,6 +9,7 @@
     "start": "node src/server.js",
     "test": "jest --runInBand --detectOpenHandles",
     "test:coverage": "jest --runInBand --coverage",
+    "sync:indexes": "node src/scripts/syncIndexes.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
