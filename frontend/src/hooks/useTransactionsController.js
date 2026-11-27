@@ -21,6 +21,7 @@ export function useTransactionsController() {
     params.minAmount,
     params.maxAmount,
     params.search,
+    params.recurring,
   ]);
   const meta = useFetch(async () => {
     const [accounts, categories] = await Promise.all([accountsApi.list(), categoriesApi.list()]);

@@ -171,4 +171,42 @@ describe('Transactions API', () => {
     expect(regexLiteral.body.data).toHaveLength(1);
     expect(regexLiteral.body.data[0].note).toBe('flight [urgent]');
   });
+
+  it('filters recurring and one-time transactions and rejects invalid values', async () => {
+    const { token, cash } = await seedUser();
+    await createTransaction(app, token, {
+      type: 'expense',
+      amount: 10,
+      category: 'Subscription',
+      account: cash.id,
+      date: '2026-01-15',
+      isRecurring: true,
+      recurrence: { frequency: 'monthly', nextDate: '2030-01-15' },
+    });
+    await createTransaction(app, token, {
+      type: 'expense',
+      amount: 20,
+      category: 'Food',
+      account: cash.id,
+      date: '2026-01-16',
+    });
+
+    const recurring = await request(app)
+      .get('/api/transactions?recurring=true&limit=100')
+      .set(authHeader(token));
+    expect(recurring.status).toBe(200);
+    expect(recurring.body.data).toHaveLength(1);
+    expect(recurring.body.data[0].isRecurring).toBe(true);
+
+    const oneTime = await request(app)
+      .get('/api/transactions?recurring=false&limit=100')
+      .set(authHeader(token));
+    expect(oneTime.body.data).toHaveLength(1);
+    expect(oneTime.body.data[0].isRecurring).toBe(false);
+
+    const invalid = await request(app)
+      .get('/api/transactions?recurring=maybe')
+      .set(authHeader(token));
+    expect(invalid.status).toBe(400);
+  });
 });

@@ -17,7 +17,7 @@ export default function TransactionFilters({
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <Field label="Search">
           {({ fieldId }) => (
             <div className="relative">
@@ -40,6 +40,20 @@ export default function TransactionFilters({
               <option value="">All types</option>
               <option value="income">Income</option>
               <option value="expense">Expense</option>
+            </Select>
+          )}
+        </Field>
+
+        <Field label="Recurrence">
+          {({ fieldId }) => (
+            <Select
+              id={fieldId}
+              value={filters.recurring}
+              onChange={(event) => update('recurring', event.target.value)}
+            >
+              <option value="">All transactions</option>
+              <option value="true">Recurring only</option>
+              <option value="false">One-time only</option>
             </Select>
           )}
         </Field>

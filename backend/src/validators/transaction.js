@@ -58,6 +58,7 @@ const listTransactionsQuerySchema = z
     minAmount: amountFilter.optional(),
     maxAmount: amountFilter.optional(),
     search: shortText(100, 'Search').optional(),
+    recurring: z.enum(['true', 'false']).optional(),
   })
   .refine((value) => !value.from || !value.to || value.from <= value.to, {
     message: 'from must be on or before to.',

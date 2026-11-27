@@ -7,6 +7,10 @@ function buildTransactionFilter(userId, query = {}) {
 
   if (query.type) filter.type = query.type;
 
+  if (query.recurring !== undefined) {
+    filter.isRecurring = query.recurring === 'true';
+  }
+
   if (query.category) {
     filter.category = new RegExp(`^${escapeRegex(query.category)}$`, 'i');
   }

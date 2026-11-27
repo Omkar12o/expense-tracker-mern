@@ -12,6 +12,7 @@ const defaults = {
   minAmount: '',
   maxAmount: '',
   search: '',
+  recurring: '',
 };
 
 export function useTransactionFilters() {
@@ -30,7 +31,7 @@ export function useTransactionFilters() {
 
   const params = useMemo(() => {
     const result = { page: filters.page, limit: filters.limit };
-    for (const key of ['type', 'category', 'account', 'from', 'to']) {
+    for (const key of ['type', 'category', 'account', 'from', 'to', 'recurring']) {
       if (filters[key]) result[key] = filters[key];
     }
     for (const key of ['minAmount', 'maxAmount']) {
