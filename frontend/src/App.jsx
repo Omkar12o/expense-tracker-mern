@@ -4,26 +4,12 @@ import ProtectedRoute from './routes/ProtectedRoute';
 import PublicOnlyRoute from './routes/PublicOnlyRoute';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import DashboardPage from './pages/DashboardPage';
+import TransactionsPage from './pages/TransactionsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import PlaceholderPage from './pages/PlaceholderPage';
 
 const screens = [
-  {
-    path: 'dashboard',
-    title: 'Dashboard',
-    description: 'Your financial snapshot at a glance.',
-    icon: '📊',
-    emptyTitle: 'Your dashboard is quiet',
-    emptyDescription: 'Add your first transaction to see live totals and trends.',
-  },
-  {
-    path: 'transactions',
-    title: 'Transactions',
-    description: 'Record, filter and export every income and expense.',
-    icon: '🧾',
-    emptyTitle: 'No transactions yet',
-    emptyDescription: 'Your income and expenses will appear here once added.',
-  },
   {
     path: 'analytics',
     title: 'Analytics',
@@ -78,6 +64,8 @@ export default function App() {
 
       <Route element={<ProtectedRoute />}>
         <Route element={<AppShell />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/transactions" element={<TransactionsPage />} />
           {screens.map((screen) => (
             <Route
               key={screen.path}
