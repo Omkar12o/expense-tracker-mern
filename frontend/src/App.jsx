@@ -9,27 +9,9 @@ import TransactionsPage from './pages/TransactionsPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import AccountsPage from './pages/AccountsPage';
 import CategoriesPage from './pages/CategoriesPage';
+import BudgetsPage from './pages/BudgetsPage';
+import GoalsPage from './pages/GoalsPage';
 import NotFoundPage from './pages/NotFoundPage';
-import PlaceholderPage from './pages/PlaceholderPage';
-
-const screens = [
-  {
-    path: 'budgets',
-    title: 'Budgets',
-    description: 'Set monthly limits and track your progress.',
-    icon: '🎯',
-    emptyTitle: 'No budgets set',
-    emptyDescription: 'Create a budget to keep your spending in check.',
-  },
-  {
-    path: 'goals',
-    title: 'Goals',
-    description: 'Save steadily for the things that matter.',
-    icon: '🏆',
-    emptyTitle: 'No goals yet',
-    emptyDescription: 'Create a savings goal and start contributing.',
-  },
-];
 
 export default function App() {
   return (
@@ -48,21 +30,8 @@ export default function App() {
           <Route path="/analytics" element={<AnalyticsPage />} />
           <Route path="/accounts" element={<AccountsPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
-          {screens.map((screen) => (
-            <Route
-              key={screen.path}
-              path={`/${screen.path}`}
-              element={
-                <PlaceholderPage
-                  title={screen.title}
-                  description={screen.description}
-                  icon={screen.icon}
-                  emptyTitle={screen.emptyTitle}
-                  emptyDescription={screen.emptyDescription}
-                />
-              }
-            />
-          ))}
+          <Route path="/budgets" element={<BudgetsPage />} />
+          <Route path="/goals" element={<GoalsPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Route>
