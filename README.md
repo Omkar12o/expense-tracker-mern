@@ -40,6 +40,9 @@ A complete client-facing handover guide is available in `docs/`:
 It covers setup, daily usage, screen guides, API reference, security,
 deployment, verification results, and troubleshooting.
 
+The GitHub Actions CI and Vercel auto-deploy flow is documented in
+`docs/CICD.md`.
+
 ## Local development
 
 Requires Node.js 20+ and either a local MongoDB or MongoDB Atlas URI.
