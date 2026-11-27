@@ -1,12 +1,19 @@
 const path = require('path');
 const dotenv = require('dotenv');
 const { z } = require('zod');
+const { normalizeMongoUri, validateMongoUri } = require('../utils/mongoUri');
 
 if (process.env.NODE_ENV !== 'test') {
   dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 }
 
 const isProd = process.env.NODE_ENV === 'production';
+
+const mongoUriSchema = z.string().min(1, 'MONGO_URI is required.').superRefine((value, ctx) => {
+  validateMongoUri(value, { production: isProd }).forEach((message) => {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message });
+  });
+});
 
 const secretSchema = isProd
   ? z.string().min(32, 'JWT_SECRET must be at least 32 characters in production.')
@@ -34,7 +41,7 @@ const clientUrlSchema = z
 const schema = z
   .object({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-    MONGO_URI: z.string().min(1, 'MONGO_URI is required.'),
+    MONGO_URI: mongoUriSchema,
     JWT_SECRET: secretSchema,
     JWT_EXPIRES_IN: z
       .string()
@@ -50,7 +57,10 @@ const schema = z
   })
   .passthrough();
 
-const parsed = schema.safeParse(process.env);
+const parsed = schema.safeParse({
+  ...process.env,
+  MONGO_URI: normalizeMongoUri(process.env.MONGO_URI),
+});
 
 if (!parsed.success) {
   const details = parsed.error.flatten().fieldErrors;

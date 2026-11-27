@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const app = require('./app');
 const { env } = require('./config/env');
 const { connectDB } = require('./config/db');
+const { safeMongoError } = require('./utils/mongoUri');
 const recurringService = require('./services/recurringService');
 
 const server = app.listen(env.PORT, () => {
@@ -11,7 +12,7 @@ const server = app.listen(env.PORT, () => {
 connectDB()
   .then(() => console.log('MongoDB connected.'))
   .catch((error) => {
-    console.error('MongoDB connection failed. API routes will return errors until it is restored:', error.message);
+    console.error('MongoDB connection failed. API routes will return errors until it is restored:', safeMongoError(error, env.MONGO_URI));
   });
 
 let localRecurringTimer = null;

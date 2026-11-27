@@ -9,6 +9,7 @@ function loadDependencies() {
       connectDB: require('../src/config/db').connectDB,
       AppError: require('../src/utils/AppError'),
       env: require('../src/config/env').env,
+      safeMongoError: require('../src/utils/mongoUri').safeMongoError,
     };
   }
   return dependencies;
@@ -109,7 +110,7 @@ module.exports = async function handler(req, res) {
     try {
       await deps.connectDB();
     } catch (error) {
-      console.error('Database connection failed:', error);
+      console.error('Database connection failed:', deps.safeMongoError(error, deps.env.MONGO_URI));
       // Let Express produce the response so CORS/security headers are applied.
       req.dbError = deps.AppError.serviceUnavailable(
         'Database is temporarily unavailable.',
@@ -121,7 +122,7 @@ module.exports = async function handler(req, res) {
   try {
     return deps.app(req, res);
   } catch (error) {
-    console.error('Serverless request failed:', error);
+    console.error('Serverless request failed:', deps.safeMongoError(error, deps.env.MONGO_URI));
     return fail(req, res, deps, 500, 'INTERNAL_ERROR', 'Something went wrong. Please try again later.');
   }
 };

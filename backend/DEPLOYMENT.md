@@ -31,6 +31,14 @@ production defaults. Set both in the backend Vercel project before deploying;
 use independent random strings of at least 32 characters. Vercel injects
 `CRON_SECRET` as `Authorization: Bearer <CRON_SECRET>` for cron calls.
 
+Before deploying, verify the connection with the real `MONGO_URI` in `backend/.env` (the password is never printed):
+
+```bash
+npm run check:db
+```
+
+`MONGO_URI` is normalized before use: a BOM, surrounding whitespace, an `export MONGO_URI=` / `MONGO_URI=` prefix, and matching outer quotes are removed automatically. In production, validation rejects values that do not start with `mongodb://` or `mongodb+srv://`, point to localhost, or contain obvious placeholders such as `YOUR_PASSWORD`. Errors are logged with credentials redacted. Vercel environment variables take precedence over `.env`.
+
 After the first deploy, sync indexes once against production Atlas:
 
 ```bash
