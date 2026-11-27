@@ -7,7 +7,7 @@ function isPlainObject(value) {
 }
 
 function suspiciousKey(key) {
-  return key.startsWith('$') || key.includes('.');
+  return key.includes('$') || key.includes('.');
 }
 
 function clean(value, state) {

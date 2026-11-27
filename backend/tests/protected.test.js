@@ -56,7 +56,14 @@ describe('Protected auth routes', () => {
   });
 
   it('requires a token on every protected GET route', async () => {
-    const routes = ['/api/auth/me'];
+    const routes = [
+      '/api/auth/me',
+      '/api/transactions',
+      '/api/transactions/export',
+      '/api/transactions/000000000000000000000000',
+      '/api/accounts',
+      '/api/categories',
+    ];
     for (const route of routes) {
       const res = await request(app).get(route);
       expect(res.status).toBe(401);

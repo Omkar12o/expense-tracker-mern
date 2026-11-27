@@ -31,10 +31,34 @@ const money = z
   .transform(roundMoney)
   .refine((value) => value >= 0.01, 'Amount must be at least 0.01.');
 
+const amountFilter = z
+  .number({ invalid_type_error: 'Amount must be a number.' })
+  .finite()
+  .nonnegative('Amount cannot be negative.')
+  .max(1000000000, 'Amount is too large.')
+  .transform(roundMoney);
+
+const httpUrl = z
+  .string()
+  .trim()
+  .max(500)
+  .url('Enter a valid URL.')
+  .refine((value) => /^https?:\/\//i.test(value), 'Only http(s) links are allowed.');
+
 const shortText = (max = 200, label = 'Text') =>
   z
     .string()
     .trim()
     .max(max, `${label} must be at most ${max} characters.`);
 
-module.exports = { objectId, toObjectId, email, dateString, monthString, money, shortText };
+module.exports = {
+  objectId,
+  toObjectId,
+  email,
+  dateString,
+  monthString,
+  money,
+  amountFilter,
+  httpUrl,
+  shortText,
+};

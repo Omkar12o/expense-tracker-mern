@@ -19,4 +19,17 @@ async function login(app, payload) {
   return request(app).post('/api/auth/login').send(payload);
 }
 
-module.exports = { register, login, uniqueId };
+function authHeader(token) {
+  return { Authorization: `Bearer ${token}` };
+}
+
+async function defaultAccounts(app, token) {
+  const res = await request(app).get('/api/accounts').set(authHeader(token));
+  return res.body.data;
+}
+
+async function createTransaction(app, token, payload) {
+  return request(app).post('/api/transactions').set(authHeader(token)).send(payload);
+}
+
+module.exports = { register, login, authHeader, defaultAccounts, createTransaction, uniqueId };
