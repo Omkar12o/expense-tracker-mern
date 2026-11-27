@@ -18,6 +18,9 @@ function validate(values) {
   return errors;
 }
 
+const inputClass =
+  'h-12 rounded-2xl! border-slate-200! bg-slate-50/80! pl-11 pr-12 text-[15px] shadow-inner shadow-slate-200/40 dark:border-slate-700 dark:bg-slate-950/60! dark:shadow-none';
+
 export default function LoginForm() {
   const { login } = useAuth();
   const toast = useToast();
@@ -56,65 +59,99 @@ export default function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-5">
-      {formError && <Alert variant="error">{formError}</Alert>}
+    <form onSubmit={handleSubmit} noValidate className="space-y-6">
+      {formError && (
+        <Alert variant="error" title="Sign in failed">
+          {formError}
+        </Alert>
+      )}
 
-      <Field label="Email address" required error={errors.email}>
-        {({ fieldId, describedBy }) => (
-          <Input
-            id={fieldId}
-            name="email"
-            type="email"
-            autoComplete="email"
-            placeholder="you@example.com"
-            value={values.email}
-            onChange={update('email')}
-            error={errors.email}
-            aria-describedby={describedBy}
-            disabled={submitting}
-          />
-        )}
-      </Field>
+      <div className="space-y-5">
+        <Field label="Email address" required error={errors.email}>
+          {({ fieldId, describedBy }) => (
+            <div className="relative">
+              <span className="pointer-events-none absolute inset-y-0 left-0 flex w-11 items-center justify-center text-slate-400 dark:text-slate-500">
+                <Icon name="mail" className="h-5 w-5" />
+              </span>
+              <Input
+                id={fieldId}
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                className={inputClass}
+                value={values.email}
+                onChange={update('email')}
+                error={errors.email}
+                aria-describedby={describedBy}
+                disabled={submitting}
+              />
+            </div>
+          )}
+        </Field>
 
-      <Field label="Password" required error={errors.password}>
-        {({ fieldId, describedBy }) => (
-          <div className="relative">
-            <Input
-              id={fieldId}
-              name="password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="current-password"
-              placeholder="Your password"
-              className="pr-12"
-              value={values.password}
-              onChange={update('password')}
-              error={errors.password}
-              aria-describedby={describedBy}
-              disabled={submitting}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((current) => !current)}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-              aria-pressed={showPassword}
-              className="absolute inset-y-0 right-0 flex w-12 items-center justify-center rounded-r-xl text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100"
-            >
-              <Icon name={showPassword ? 'eyeOff' : 'eye'} className="h-5 w-5" />
-            </button>
-          </div>
-        )}
-      </Field>
+        <Field label="Password" required error={errors.password}>
+          {({ fieldId, describedBy }) => (
+            <div className="relative">
+              <span className="pointer-events-none absolute inset-y-0 left-0 flex w-11 items-center justify-center text-slate-400 dark:text-slate-500">
+                <Icon name="lock" className="h-5 w-5" />
+              </span>
+              <Input
+                id={fieldId}
+                name="password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                placeholder="Your password"
+                className={inputClass}
+                value={values.password}
+                onChange={update('password')}
+                error={errors.password}
+                aria-describedby={describedBy}
+                disabled={submitting}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((current) => !current)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-pressed={showPassword}
+                className="absolute inset-y-0 right-0 flex w-12 items-center justify-center rounded-r-2xl text-slate-400 transition-colors hover:text-teal-700 dark:text-slate-500 dark:hover:text-teal-300"
+              >
+                <Icon name={showPassword ? 'eyeOff' : 'eye'} className="h-5 w-5" />
+              </button>
+            </div>
+          )}
+        </Field>
+      </div>
 
-      <Button type="submit" size="lg" fullWidth loading={submitting}>
-        Sign in
+      <Button
+        type="submit"
+        size="lg"
+        fullWidth
+        loading={submitting}
+        className="group h-12 rounded-2xl! bg-gradient-to-r from-teal-700 to-teal-600 shadow-lg! shadow-teal-900/15 hover:from-teal-800 hover:to-teal-700 dark:from-teal-600 dark:to-teal-500 dark:hover:from-teal-500 dark:hover:to-teal-400"
+      >
+        <span>Sign in</span>
+        <Icon name="chevronRight" className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
       </Button>
 
-      <p className="text-center text-sm text-slate-600 dark:text-slate-300">
-        New here?{' '}
-        <Link to="/register" className="font-semibold text-teal-700 hover:underline dark:text-teal-300">
-          Create an account
-        </Link>
-      </p>
+      <div className="relative py-1">
+        <div className="absolute inset-0 flex items-center" aria-hidden="true">
+          <span className="w-full border-t border-slate-200 dark:border-slate-800" />
+        </div>
+        <div className="relative flex justify-center">
+          <span className="bg-white px-3 text-xs font-medium text-slate-400 dark:bg-slate-900 dark:text-slate-500">
+            New to Expense Tracker?
+          </span>
+        </div>
+      </div>
+
+      <Link
+        to="/register"
+        className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white text-sm font-semibold text-slate-700 transition-colors hover:border-teal-200 hover:bg-teal-50 hover:text-teal-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-teal-800 dark:hover:bg-teal-950/40 dark:hover:text-teal-200"
+      >
+        <Icon name="spark" className="h-4 w-4 text-teal-600 dark:text-teal-400" />
+        Create your account
+      </Link>
     </form>
   );
 }

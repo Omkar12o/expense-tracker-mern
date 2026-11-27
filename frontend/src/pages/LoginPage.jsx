@@ -9,8 +9,9 @@ export default function LoginPage() {
 
   return (
     <AuthLayout
+      eyebrow="Secure sign in"
       title="Welcome back"
-      description="Sign in to pick up where you left off."
+      description="Sign in to see your dashboard, insights, and goals in one place."
     >
       {sessionExpired && (
         <div className="mb-5">
