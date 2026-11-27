@@ -45,10 +45,10 @@ BACKEND=https://your-backend.vercel.app/api
 curl -s "$BACKEND/health"          # https://<backend-domain>/api/health
 curl -s "https://your-backend.vercel.app/health"  # root-level alias
 curl -s -X POST "$BACKEND/auth/register" -H 'Content-Type: application/json' \
-  -d '{"name":"Smoke User","email":"smoke@example.com","password":"Password123!"}'
+  -d '{"name":"Smoke User","username":"smoke_demo","email":"smoke@example.com","password":"Password123!"}'
 
 curl -s -X POST "$BACKEND/auth/login" -H 'Content-Type: application/json' \
-  -d '{"email":"smoke@example.com","password":"Password123!"}'
+  -d '{"username":"smoke_demo","password":"Password123!"}'
 
 TOKEN='paste-the-token-from-login-here'
 curl -s "$BACKEND/auth/me" -H "Authorization: Bearer $TOKEN"

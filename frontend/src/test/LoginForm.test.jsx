@@ -42,7 +42,7 @@ describe('LoginForm', () => {
 
     await user.click(screen.getByRole('button', { name: /sign in/i }));
 
-    expect(await screen.findByText('Email is required.')).toBeInTheDocument();
+    expect(await screen.findByText('Username is required.')).toBeInTheDocument();
     expect(screen.getByText('Password is required.')).toBeInTheDocument();
     expect(mocks.login).not.toHaveBeenCalled();
   });
@@ -52,28 +52,28 @@ describe('LoginForm', () => {
     const user = userEvent.setup();
     renderForm();
 
-    await user.type(screen.getByPlaceholderText('you@example.com'), ' User@Example.COM ');
+    await user.type(screen.getByPlaceholderText('your_username'), ' User_One ');
     await user.type(screen.getByPlaceholderText('Your password'), 'Password123!');
     await user.click(screen.getByRole('button', { name: /sign in/i }));
 
     expect(await screen.findByText('Signed in page')).toBeInTheDocument();
     expect(mocks.login).toHaveBeenCalledWith({
-      email: 'user@example.com',
+      username: 'user_one',
       password: 'Password123!',
     });
     expect(mocks.success).toHaveBeenCalledWith('Welcome back', 'You are signed in.');
   });
 
   it('surfaces API errors without navigating', async () => {
-    mocks.login.mockRejectedValue({ appError: { message: 'Invalid email or password.' } });
+    mocks.login.mockRejectedValue({ appError: { message: 'Invalid username or password.' } });
     const user = userEvent.setup();
     renderForm();
 
-    await user.type(screen.getByPlaceholderText('you@example.com'), 'user@example.com');
+    await user.type(screen.getByPlaceholderText('your_username'), 'user@example.com');
     await user.type(screen.getByPlaceholderText('Your password'), 'WrongPassword1');
     await user.click(screen.getByRole('button', { name: /sign in/i }));
 
-    expect(await screen.findByText('Invalid email or password.')).toBeInTheDocument();
+    expect(await screen.findByText('Invalid username or password.')).toBeInTheDocument();
     expect(mocks.error).toHaveBeenCalled();
     expect(screen.queryByText('Signed in page')).not.toBeInTheDocument();
   });

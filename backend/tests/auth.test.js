@@ -12,6 +12,7 @@ describe('Auth API', () => {
     expect(res.status).toBe(201);
     expect(res.body.success).toBe(true);
     expect(user.email).toBe(payload.email.toLowerCase());
+    expect(user.username).toBe(payload.username.toLowerCase());
     expect(typeof token).toBe('string');
     expect(user.password).toBeUndefined();
 
@@ -28,7 +29,16 @@ describe('Auth API', () => {
     expect(second.res.body.error.code).toBe('EMAIL_IN_USE');
   });
 
-  it('rejects weak passwords and malformed emails', async () => {
+  it('rejects duplicate usernames case-insensitively with 409', async () => {
+    const first = await register(app);
+    expect(first.res.status).toBe(201);
+
+    const second = await register(app, { username: first.payload.username.toUpperCase() });
+    expect(second.res.status).toBe(409);
+    expect(second.res.body.error.code).toBe('USERNAME_IN_USE');
+  });
+
+  it('rejects weak passwords, malformed emails and invalid usernames', async () => {
     const weak = await register(app, { password: 'short1' });
     expect(weak.res.status).toBe(400);
     expect(weak.res.body.error.code).toBe('VALIDATION_ERROR');
@@ -36,6 +46,10 @@ describe('Auth API', () => {
     const badEmail = await register(app, { email: 'not-an-email' });
     expect(badEmail.res.status).toBe(400);
     expect(badEmail.res.body.error.code).toBe('VALIDATION_ERROR');
+
+    const badUsername = await register(app, { username: 'bad user!' });
+    expect(badUsername.res.status).toBe(400);
+    expect(badUsername.res.body.error.code).toBe('VALIDATION_ERROR');
   });
 
   it('stores the password as a bcrypt hash and ignores unknown fields', async () => {
@@ -49,13 +63,24 @@ describe('Auth API', () => {
     expect(user.role).toBeUndefined();
   });
 
-  it('logs in with valid credentials', async () => {
+  it('logs in with a username and password', async () => {
+    const created = await register(app);
+    const res = await login(app, {
+      username: created.payload.username.toUpperCase(),
+      password: created.payload.password,
+    });
+
+    expect(res.status).toBe(200);
+    expect(res.body.data.token).toEqual(expect.any(String));
+    expect(res.body.data.user.username).toBe(created.payload.username);
+  });
+
+  it('still accepts an email address as a legacy login identifier', async () => {
     const created = await register(app);
     const res = await login(app, { email: created.payload.email, password: created.payload.password });
 
     expect(res.status).toBe(200);
-    expect(res.body.data.token).toEqual(expect.any(String));
-    expect(res.body.data.user.email).toBe(created.payload.email.toLowerCase());
+    expect(res.body.data.user.id).toBe(created.user.id);
   });
 
   it('uses the same message for unknown emails and wrong passwords', async () => {
@@ -78,7 +103,7 @@ describe('Auth API', () => {
   it('rejects NoSQL operator payloads with 400', async () => {
     const res = await request(app)
       .post('/api/auth/login')
-      .send({ email: { $ne: null }, password: 'Password123!' });
+      .send({ username: { $ne: null }, password: 'Password123!' });
 
     expect(res.status).toBe(400);
     expect(res.body.error.code).toBe('VALIDATION_ERROR');

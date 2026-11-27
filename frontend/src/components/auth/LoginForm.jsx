@@ -10,10 +10,7 @@ import Icon from '../ui/Icon';
 
 function validate(values) {
   const errors = {};
-  if (!values.email.trim()) errors.email = 'Email is required.';
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
-    errors.email = 'Enter a valid email address.';
-  }
+  if (!values.username.trim()) errors.username = 'Username is required.';
   if (!values.password) errors.password = 'Password is required.';
   return errors;
 }
@@ -26,7 +23,7 @@ export default function LoginForm() {
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-  const [values, setValues] = useState({ email: '', password: '' });
+  const [values, setValues] = useState({ username: '', password: '' });
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -46,7 +43,7 @@ export default function LoginForm() {
 
     setSubmitting(true);
     try {
-      await login({ email: values.email.trim().toLowerCase(), password: values.password });
+      await login({ username: values.username.trim().toLowerCase(), password: values.password });
       toast.success('Welcome back', 'You are signed in.');
       navigate(location.state?.from?.pathname || '/dashboard', { replace: true });
     } catch (error) {
@@ -67,22 +64,27 @@ export default function LoginForm() {
       )}
 
       <div className="space-y-5">
-        <Field label="Email address" required error={errors.email}>
+        <Field
+          label="Username"
+          required
+          error={errors.username}
+          hint="You can also use your email address."
+        >
           {({ fieldId, describedBy }) => (
             <div className="relative">
               <span className="pointer-events-none absolute inset-y-0 left-0 flex w-11 items-center justify-center text-slate-400 dark:text-slate-500">
-                <Icon name="mail" className="h-5 w-5" />
+                <Icon name="user" className="h-5 w-5" />
               </span>
               <Input
                 id={fieldId}
-                name="email"
-                type="email"
-                autoComplete="email"
-                placeholder="you@example.com"
+                name="username"
+                type="text"
+                autoComplete="username"
+                placeholder="your_username"
                 className={inputClass}
-                value={values.email}
-                onChange={update('email')}
-                error={errors.email}
+                value={values.username}
+                onChange={update('username')}
+                error={errors.username}
                 aria-describedby={describedBy}
                 disabled={submitting}
               />

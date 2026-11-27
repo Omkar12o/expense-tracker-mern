@@ -92,15 +92,17 @@ npm run dev</code></pre>
 VITE_CURRENCY=$</code></pre>
 <h3 id="4-4-demo-account">4.4 Demo account</h3>
 <p>For local evaluation only, a demo account can be created with:</p>
-<pre><code>Email:    smoke@example.com
+<pre><code>Username: smoke_demo
+Email:    smoke@example.com
 Password: Password1231</code></pre>
+<p>Sign in with the <strong>username</strong> and password. The email address is kept for account records and also works as a legacy sign-in identifier.</p>
 <p>This account belongs to the local database only. In production, users should register their own accounts.</p>
 <hr>
 <h2 id="5-how-to-use-the-application">5. How to use the application</h2>
 <h3 id="5-1-create-an-account">5.1 Create an account</h3>
-<ol><li>Open <code>http://localhost:5173/register</code>.</li><li>Enter your name, email, and a password of at least eight characters containing a letter and a number.</li><li>Select <strong>Create account</strong>.</li><li>You will be signed in automatically and taken to the dashboard.</li></ol>
+<ol><li>Open <code>http://localhost:5173/register</code>.</li><li>Enter your name, a username (3-30 letters, numbers or underscores), your email, and a password of at least eight characters containing a letter and a number.</li><li>Select <strong>Create account</strong>.</li><li>You will be signed in automatically and taken to the dashboard.</li></ol>
 <h3 id="5-2-sign-in-and-sign-out">5.2 Sign in and sign out</h3>
-<ol><li>Open <code>http://localhost:5173/login</code>.</li><li>Enter your email and password.</li><li>Select <strong>Sign in</strong>.</li><li>Use the profile menu in the top navigation to sign out.</li></ol>
+<ol><li>Open <code>http://localhost:5173/login</code>.</li><li>Enter your username and password (an email address also works).</li><li>Select <strong>Sign in</strong>.</li><li>Use the profile menu in the top navigation to sign out.</li></ol>
 <p>If a session expires, the login screen displays a session-ended notice and returns you to your original page after signing in again.</p>
 <h3 id="5-3-set-up-accounts">5.3 Set up accounts</h3>
 <p>Accounts are the funding sources used by transactions.</p>

@@ -11,6 +11,9 @@ import Icon from '../ui/Icon';
 function validate(values) {
   const errors = {};
   if (values.name.trim().length < 2) errors.name = 'Name must be at least 2 characters.';
+  if (!/^[a-z0-9_]{3,30}$/.test(values.username.trim().toLowerCase())) {
+    errors.username = 'Use 3-30 letters, numbers or underscores.';
+  }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
     errors.email = 'Enter a valid email address.';
   }
@@ -29,6 +32,7 @@ export default function RegisterForm() {
   const navigate = useNavigate();
   const [values, setValues] = useState({
     name: '',
+    username: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -54,6 +58,7 @@ export default function RegisterForm() {
     try {
       await register({
         name: values.name.trim(),
+        username: values.username.trim().toLowerCase(),
         email: values.email.trim().toLowerCase(),
         password: values.password,
       });
@@ -88,6 +93,27 @@ export default function RegisterForm() {
             value={values.name}
             onChange={update('name')}
             error={errors.name}
+            aria-describedby={describedBy}
+            disabled={submitting}
+          />
+        )}
+      </Field>
+
+      <Field
+        label="Username"
+        required
+        error={errors.username}
+        hint="3-30 letters, numbers or underscores. This is how you sign in."
+      >
+        {({ fieldId, describedBy }) => (
+          <Input
+            id={fieldId}
+            name="username"
+            autoComplete="username"
+            placeholder="your_username"
+            value={values.username}
+            onChange={update('username')}
+            error={errors.username}
             aria-describedby={describedBy}
             disabled={submitting}
           />

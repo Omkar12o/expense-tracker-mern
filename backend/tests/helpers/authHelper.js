@@ -5,9 +5,11 @@ function uniqueId() {
 }
 
 async function register(app, overrides = {}) {
+  const id = uniqueId();
   const payload = {
     name: 'Test User',
-    email: `user_${uniqueId()}@example.com`,
+    username: `user_${id}`,
+    email: `user_${id}@example.com`,
     password: 'Password123!',
     ...overrides,
   };

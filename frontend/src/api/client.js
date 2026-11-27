@@ -2,8 +2,15 @@ import axios from 'axios';
 import { clearAuthStorage, getToken } from '../utils/storage';
 import { notifySessionExpired } from './session';
 
+export function normalizeApiUrl(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return 'http://localhost:4000/api';
+  const trimmed = raw.replace(/\/+$/, '');
+  return /\/api$/i.test(trimmed) ? trimmed : `${trimmed}/api`;
+}
+
 const client = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:4000/api',
+  baseURL: normalizeApiUrl(import.meta.env.VITE_API_URL),
   timeout: 20000,
   headers: { 'Content-Type': 'application/json' },
 });

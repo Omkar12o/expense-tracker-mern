@@ -131,9 +131,12 @@ VITE_CURRENCY=$
 For local evaluation only, a demo account can be created with:
 
 ```text
+Username: smoke_demo
 Email:    smoke@example.com
 Password: Password1231
 ```
+
+Sign in with the **username** and password. The email address is kept for account records and also works as a legacy sign-in identifier.
 
 This account belongs to the local database only. In production, users should register their own accounts.
 
@@ -144,14 +147,14 @@ This account belongs to the local database only. In production, users should reg
 ### 5.1 Create an account
 
 1. Open `http://localhost:5173/register`.
-2. Enter your name, email, and a password of at least eight characters containing a letter and a number.
+2. Enter your name, a username (3-30 letters, numbers or underscores), your email, and a password of at least eight characters containing a letter and a number.
 3. Select **Create account**.
 4. You will be signed in automatically and taken to the dashboard.
 
 ### 5.2 Sign in and sign out
 
 1. Open `http://localhost:5173/login`.
-2. Enter your email and password.
+2. Enter your username and password (an email address also works).
 3. Select **Sign in**.
 4. Use the profile menu in the top navigation to sign out.
 

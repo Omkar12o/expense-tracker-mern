@@ -1,5 +1,5 @@
 const { z } = require('zod');
-const { email } = require('./common');
+const { email, username } = require('./common');
 
 const password = z
   .string()
@@ -10,13 +10,21 @@ const password = z
 
 const registerSchema = z.object({
   name: z.string().trim().min(2, 'Name must be at least 2 characters.').max(60),
+  username,
   email,
   password,
 });
 
-const loginSchema = z.object({
-  email,
-  password: z.string().min(1, 'Password is required.').max(128),
-});
+// `email` is kept as an optional legacy alias so existing accounts can still sign in.
+const loginSchema = z
+  .object({
+    username: z.string().trim().max(120).optional(),
+    email: z.string().trim().max(120).optional(),
+    password: z.string().min(1, 'Password is required.').max(128),
+  })
+  .refine((value) => Boolean(value.username || value.email), {
+    message: 'Username is required.',
+    path: ['username'],
+  });
 
 module.exports = { registerSchema, loginSchema };

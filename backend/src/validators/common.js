@@ -19,6 +19,14 @@ const email = z
   .max(120)
   .pipe(z.string().email('Enter a valid email address.'));
 
+const username = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .min(3, 'Username must be at least 3 characters.')
+  .max(30, 'Username must be at most 30 characters.')
+  .regex(/^[a-z0-9_]+$/, 'Use only letters, numbers and underscores.');
+
 const dateString = z.string().refine(isValidDateString, 'Use a valid UTC calendar date (YYYY-MM-DD).');
 
 const monthString = z.string().refine(isValidMonthString, 'Use a valid month (YYYY-MM).');
@@ -62,6 +70,7 @@ module.exports = {
   objectId,
   toObjectId,
   email,
+  username,
   dateString,
   monthString,
   money,

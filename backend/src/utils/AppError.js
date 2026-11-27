@@ -27,6 +27,10 @@ class AppError extends Error {
   static conflict(message = 'This resource conflicts with an existing record.', code = 'CONFLICT') {
     return new AppError(409, code, message);
   }
+
+  static serviceUnavailable(message = 'Service temporarily unavailable.', code = 'SERVICE_UNAVAILABLE') {
+    return new AppError(503, code, message);
+  }
 }
 
 module.exports = AppError;

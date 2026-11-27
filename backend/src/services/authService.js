@@ -20,22 +20,34 @@ function publicUser(user) {
   return {
     id: user._id.toString(),
     name: user.name,
+    username: user.username,
     email: user.email,
   };
 }
 
 async function register(input) {
   const email = input.email.toLowerCase();
-  const exists = await User.exists({ email });
-  if (exists) {
+  const username = input.username.toLowerCase();
+  const [emailExists, usernameExists] = await Promise.all([
+    User.exists({ email }),
+    User.exists({ username }),
+  ]);
+  if (emailExists) {
     throw AppError.conflict('An account with this email already exists.', 'EMAIL_IN_USE');
+  }
+  if (usernameExists) {
+    throw AppError.conflict('An account with this username already exists.', 'USERNAME_IN_USE');
   }
 
   let user;
   try {
-    user = await User.create({ name: input.name, email, password: input.password });
+    user = await User.create({ name: input.name, username, email, password: input.password });
   } catch (error) {
     if (error && error.code === 11000) {
+      const field = Object.keys(error.keyPattern || {})[0];
+      if (field === 'username') {
+        throw AppError.conflict('An account with this username already exists.', 'USERNAME_IN_USE');
+      }
       throw AppError.conflict('An account with this email already exists.', 'EMAIL_IN_USE');
     }
     throw error;
@@ -54,12 +66,13 @@ async function register(input) {
 }
 
 async function login(input) {
-  const email = input.email.toLowerCase();
-  const user = await User.findOne({ email }).select('+password');
+  const identifier = String(input.username || input.email || '').trim().toLowerCase();
+  const query = identifier.includes('@') ? { email: identifier } : { username: identifier };
+  const user = await User.findOne(query).select('+password');
   const validPassword = await bcrypt.compare(input.password, user ? user.password : DUMMY_HASH);
 
   if (!user || !validPassword) {
-    throw AppError.unauthorized('Invalid email or password.', 'INVALID_CREDENTIALS');
+    throw AppError.unauthorized('Invalid username or password.', 'INVALID_CREDENTIALS');
   }
 
   return { user: publicUser(user), token: signToken(user) };
