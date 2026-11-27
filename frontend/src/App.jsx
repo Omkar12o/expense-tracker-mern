@@ -7,6 +7,8 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import TransactionsPage from './pages/TransactionsPage';
 import AnalyticsPage from './pages/AnalyticsPage';
+import AccountsPage from './pages/AccountsPage';
+import CategoriesPage from './pages/CategoriesPage';
 import NotFoundPage from './pages/NotFoundPage';
 import PlaceholderPage from './pages/PlaceholderPage';
 
@@ -27,22 +29,6 @@ const screens = [
     emptyTitle: 'No goals yet',
     emptyDescription: 'Create a savings goal and start contributing.',
   },
-  {
-    path: 'accounts',
-    title: 'Accounts',
-    description: 'Keep cash, bank and card balances in one place.',
-    icon: '👛',
-    emptyTitle: 'No accounts found',
-    emptyDescription: 'Add an account to organise your transactions.',
-  },
-  {
-    path: 'categories',
-    title: 'Categories',
-    description: 'Customise the labels you use every day.',
-    icon: '🏷️',
-    emptyTitle: 'No custom categories',
-    emptyDescription: 'Built-in categories are ready to use; add your own anytime.',
-  },
 ];
 
 export default function App() {
@@ -60,6 +46,8 @@ export default function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
           <Route path="/analytics" element={<AnalyticsPage />} />
+          <Route path="/accounts" element={<AccountsPage />} />
+          <Route path="/categories" element={<CategoriesPage />} />
           {screens.map((screen) => (
             <Route
               key={screen.path}
