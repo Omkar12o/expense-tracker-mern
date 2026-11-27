@@ -58,7 +58,8 @@ head -1 export.csv   # Date,Type,Category,Account,Amount,Note
 
 ## 4. Serverless caveats
 
-- `api/index.js` handles `/api`, and `api/[...path].js` forwards every `/api/*` request to the same Express app. No internal rewrite is used, so Vercel preserves the original request path.
+- `api/index.js` handles `/api`. `vercel.json` rewrites nested `/api/*` paths to `/api?__original=/api/<path>` because Vercel does not route deep paths to the catch-all function reliably; `api/index.js` restores the original path before Express sees it. `api/[...path].js` remains as a fallback for deployments that still use filesystem routing.
+- `OPTIONS` preflight and health checks never open a MongoDB connection. Database failures are forwarded to Express as `req.dbError`, so even the `503 DATABASE_UNAVAILABLE` response includes CORS and security headers.
 - No `setInterval` in the API app; recurring work is triggered by access, the daily Vercel cron, and a local-only timer in `server.js`.
 - No persistent disk; attachments are validated http(s) links only.
 - Rate-limit counters are in memory and therefore per serverless instance. Upgrade path: store counters in MongoDB/Redis with a shared key.

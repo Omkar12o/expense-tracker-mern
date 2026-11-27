@@ -9,8 +9,15 @@ export function normalizeApiUrl(value) {
   return /\/api$/i.test(trimmed) ? trimmed : `${trimmed}/api`;
 }
 
+export function resolveApiUrl(value, isProd = import.meta.env.PROD) {
+  const configured = String(value || '').trim();
+  if (configured) return normalizeApiUrl(configured);
+  // In production the frontend proxies /api to the backend, so no env var is required.
+  return isProd ? '/api' : 'http://localhost:4000/api';
+}
+
 const client = axios.create({
-  baseURL: normalizeApiUrl(import.meta.env.VITE_API_URL),
+  baseURL: resolveApiUrl(import.meta.env.VITE_API_URL),
   timeout: 20000,
   headers: { 'Content-Type': 'application/json' },
 });

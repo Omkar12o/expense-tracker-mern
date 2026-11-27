@@ -35,6 +35,13 @@ app.use(sanitize);
 
 if (env.NODE_ENV !== 'test') app.use(morgan('combined'));
 
+// The serverless handler records connection failures here so Express can return
+// a normal JSON error with CORS and security headers already applied.
+app.use((req, _res, next) => {
+  if (req.dbError) return next(req.dbError);
+  return next();
+});
+
 app.get('/health', healthController.check);
 
 app.use('/api', apiLimiter, routes);

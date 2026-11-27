@@ -383,7 +383,7 @@ A negative contribution withdraws from the goal.
 | `API_RATE_LIMIT_MAX` | backend | General API requests per window |
 | `CURRENCY_SYMBOL` | backend | Currency symbol in server messages |
 | `CRON_SECRET` | backend | Bearer secret for the recurring cron endpoint |
-| `VITE_API_URL` | frontend | Backend API base URL |
+| `VITE_API_URL` | frontend | Backend API base URL (optional in production; `/api` is proxied automatically) |
 | `VITE_CURRENCY` | frontend | Currency symbol displayed in the UI |
 
 Only `.env.example` files are stored in the repository. Real `.env` and `.env.local` files must never be committed.
@@ -444,7 +444,7 @@ VITE_API_URL=https://your-backend.vercel.app/api
 VITE_CURRENCY=$
 ```
 
-`frontend/vercel.json` rewrites unknown paths to `/index.html`, so routes such as `/transactions` work on direct access and refresh.
+`frontend/vercel.json` first proxies `/api/*` to the backend, then rewrites unknown paths to `/index.html`, so API calls and client-side routes such as `/transactions` both work on direct access and refresh.
 
 ### 10.4 CORS finalisation
 
