@@ -12,7 +12,11 @@ export default function AppShell() {
         Skip to main content
       </a>
       <Header />
-      <main id="main-content" tabIndex={-1} className="mx-auto max-w-7xl px-4 pb-28 pt-6 sm:px-6 lg:px-8 lg:pb-12">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-7xl px-4 pb-32 pt-5 sm:px-6 sm:pb-28 sm:pt-6 lg:px-8 xl:pb-12"
+      >
         <Outlet />
       </main>
       <MobileNav />

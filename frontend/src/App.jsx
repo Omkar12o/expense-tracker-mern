@@ -18,7 +18,7 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 function RouteFallback() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
+    <div className="mx-auto w-full max-w-7xl px-4 pb-28 pt-8 xl:pb-8">
       <LoadingState rows={4} />
     </div>
   );

@@ -77,7 +77,7 @@ export default function AccountsPage() {
               <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
                 Combined balance
               </p>
-              <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">
+              <p className="mt-1 truncate text-2xl font-bold text-slate-900 dark:text-slate-100">
                 {currency(total)}
               </p>
             </div>

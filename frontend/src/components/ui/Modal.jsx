@@ -78,11 +78,11 @@ export default function Modal({
         aria-labelledby={titleId}
         aria-describedby={description ? descriptionId : undefined}
         tabIndex={-1}
-        className={`relative max-h-[92vh] w-full overflow-y-auto rounded-t-2xl bg-white shadow-2xl outline-none dark:bg-slate-900 sm:rounded-2xl ${widths[size] || widths.md}`}
+        className={`relative max-h-[calc(100dvh-1rem)] w-full overflow-y-auto rounded-t-2xl bg-white pb-[env(safe-area-inset-bottom)] shadow-2xl outline-none dark:bg-slate-900 sm:max-h-[calc(100vh-2rem)] sm:rounded-2xl sm:pb-0 ${widths[size] || widths.md}`}
       >
         <div className="flex items-start justify-between gap-4 border-b border-slate-200 p-5 dark:border-slate-800">
-          <div>
-            <h2 id={titleId} className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+          <div className="min-w-0">
+            <h2 id={titleId} className="break-words text-lg font-semibold text-slate-900 dark:text-slate-100">
               {title}
             </h2>
             {description && (
@@ -95,7 +95,7 @@ export default function Modal({
             type="button"
             onClick={onClose}
             aria-label="Close dialog"
-            className="-mr-1 -mt-1 rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+            className="-mr-1 -mt-1 shrink-0 rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
           >
             <span aria-hidden="true" className="text-lg leading-none">
               ×

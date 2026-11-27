@@ -3,9 +3,9 @@ import Icon from '../ui/Icon';
 
 function Balance({ label, value, tone = '' }) {
   return (
-    <div>
+    <div className="min-w-0">
       <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</p>
-      <p className={`mt-1 text-sm font-semibold ${tone}`}>{currency(value)}</p>
+      <p className={`mt-1 truncate text-[13px] font-semibold sm:text-sm ${tone}`}>{currency(value)}</p>
     </div>
   );
 }
@@ -40,7 +40,7 @@ function AccountCard({ item, onEdit, onDelete }) {
         </div>
       </div>
 
-      <div className="mt-5 grid grid-cols-3 gap-3">
+      <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-3">
         <Balance label="Balance" value={item.balance} />
         <Balance label="Income" value={item.income} tone="text-emerald-700 dark:text-emerald-400" />
         <Balance label="Expense" value={item.expense} tone="text-rose-700 dark:text-rose-400" />

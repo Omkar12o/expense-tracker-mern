@@ -8,9 +8,14 @@ const primary = navItems.slice(0, 4);
 const secondary = navItems.slice(4);
 
 function itemClass({ isActive }) {
-  return `flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-[11px] font-semibold ${
+  return `flex min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-0.5 text-center text-[11px] font-semibold leading-tight ${
     isActive ? 'text-teal-700 dark:text-teal-300' : 'text-slate-500 dark:text-slate-400'
   }`;
+}
+
+function navLabel(item) {
+  const visible = item.shortLabel || item.label;
+  return visible === item.label ? visible : `${visible} (${item.label})`;
 }
 
 export default function MobileNav() {
@@ -20,17 +25,28 @@ export default function MobileNav() {
     <>
       <nav
         aria-label="Mobile navigation"
-        className="fixed inset-x-0 bottom-0 z-40 flex border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden dark:border-slate-800 dark:bg-slate-950/95"
+        className="fixed inset-x-0 bottom-0 z-40 flex border-t border-slate-200 bg-white/95 px-1 pb-[calc(0.35rem+env(safe-area-inset-bottom))] pt-1 backdrop-blur xl:hidden dark:border-slate-800 dark:bg-slate-950/95"
       >
         {primary.map((item) => (
-          <NavLink key={item.to} to={item.to} className={itemClass}>
-            <Icon name={item.icon} className="h-5 w-5" />
-            {item.label}
+          <NavLink
+            key={item.to}
+            to={item.to}
+            className={itemClass}
+            aria-label={navLabel(item)}
+            title={navLabel(item)}
+          >
+            <Icon name={item.icon} className="h-5 w-5 shrink-0" />
+            <span className="max-w-full truncate">{item.shortLabel || item.label}</span>
           </NavLink>
         ))}
-        <button type="button" onClick={() => setMoreOpen(true)} className={itemClass({ isActive: false })}>
-          <Icon name="menu" className="h-5 w-5" />
-          More
+        <button
+          type="button"
+          onClick={() => setMoreOpen(true)}
+          className={itemClass({ isActive: false })}
+          aria-label="More sections"
+        >
+          <Icon name="menu" className="h-5 w-5 shrink-0" />
+          <span className="max-w-full truncate">More</span>
         </button>
       </nav>
 

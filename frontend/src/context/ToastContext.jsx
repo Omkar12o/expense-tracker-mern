@@ -81,7 +81,7 @@ export function ToastProvider({ children }) {
     <ToastContext.Provider value={api}>
       {children}
       <div
-        className="pointer-events-none fixed inset-x-0 top-0 z-[60] flex flex-col gap-2 p-3 sm:left-auto sm:right-0 sm:w-96 sm:p-5"
+        className="pointer-events-none fixed inset-x-0 top-0 z-[60] flex max-w-full flex-col gap-2 p-3 pt-[calc(0.75rem+env(safe-area-inset-top))] sm:left-auto sm:right-0 sm:w-96 sm:p-5 sm:pt-5"
         aria-live="polite"
         aria-atomic="false"
       >

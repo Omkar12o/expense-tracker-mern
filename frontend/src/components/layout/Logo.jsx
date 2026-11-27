@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-export default function Logo({ compact = false, inverse = false }) {
+export default function Logo({ compact = false, compactOnMobile = false, inverse = false }) {
   const markClass = inverse
     ? 'bg-white/15 text-white ring-1 ring-white/25'
     : 'bg-teal-700 text-white shadow-sm dark:bg-teal-600';
@@ -16,7 +16,11 @@ export default function Logo({ compact = false, inverse = false }) {
         ET
       </span>
       {!compact && (
-        <span className={`text-base font-bold tracking-tight ${textClass}`}>Expense Tracker</span>
+        <span
+          className={`${compactOnMobile ? 'hidden sm:inline' : ''} text-base font-bold tracking-tight ${textClass}`}
+        >
+          Expense Tracker
+        </span>
       )}
     </Link>
   );

@@ -88,7 +88,7 @@ export default function BudgetsPage() {
           <CardBody className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Month</p>
-              <p className="mt-1 text-xl font-bold text-slate-900 dark:text-slate-100">
+              <p className="mt-1 truncate text-xl font-bold text-slate-900 dark:text-slate-100">
                 {currency(budgets.data?.totalSpent || 0)} spent
               </p>
             </div>
