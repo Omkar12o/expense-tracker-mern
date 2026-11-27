@@ -26,7 +26,10 @@ vercel env add CRON_SECRET production      # random 32+ chars
 vercel --prod
 ```
 
-Vercel injects `CRON_SECRET` as `Authorization: Bearer <CRON_SECRET>` for cron calls.
+`JWT_SECRET` and `CRON_SECRET` are required in every environment and have no
+production defaults. Set both in the backend Vercel project before deploying;
+use independent random strings of at least 32 characters. Vercel injects
+`CRON_SECRET` as `Authorization: Bearer <CRON_SECRET>` for cron calls.
 
 After the first deploy, sync indexes once against production Atlas:
 
