@@ -54,6 +54,7 @@ head -1 export.csv   # Date,Type,Category,Account,Amount,Note
 
 ## 4. Serverless caveats
 
+- `api/index.js` handles `/api`, and `api/[...path].js` forwards every `/api/*` request to the same Express app. No internal rewrite is used, so Vercel preserves the original request path.
 - No `setInterval` in the API app; recurring work is triggered by access, the daily Vercel cron, and a local-only timer in `server.js`.
 - No persistent disk; attachments are validated http(s) links only.
 - Rate-limit counters are in memory and therefore per serverless instance. Upgrade path: store counters in MongoDB/Redis with a shared key.
