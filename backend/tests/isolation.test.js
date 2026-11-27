@@ -1,5 +1,6 @@
 const request = require('supertest');
 const app = require('../src/app');
+const { todayUTC, monthKey } = require('../src/utils/dates');
 const { register, authHeader, defaultAccounts, createTransaction } = require('./helpers/authHelper');
 
 describe('User data isolation', () => {
@@ -130,5 +131,44 @@ describe('User data isolation', () => {
       .delete(`/api/categories/${ctx.categoryId}`)
       .set(bHeaders);
     expect(deleteCategory.status).toBe(404);
+  });
+
+  it('isolates budgets, goals, dashboard and analytics', async () => {
+    const ctx = await setup();
+    const bHeaders = authHeader(ctx.b.token);
+    const month = monthKey(todayUTC());
+
+    const budgetRes = await request(app)
+      .put('/api/budgets')
+      .set(authHeader(ctx.a.token))
+      .send({ month, category: null, amount: 100 });
+    const goalRes = await request(app)
+      .post('/api/goals')
+      .set(authHeader(ctx.a.token))
+      .send({ name: 'A Trip', targetAmount: 500 });
+
+    const budgets = await request(app).get('/api/budgets').set(bHeaders);
+    expect(budgets.body.data.overall).toBeNull();
+    expect(budgets.body.data.categories).toEqual([]);
+
+    const goals = await request(app).get('/api/goals').set(bHeaders);
+    expect(goals.body.data).toEqual([]);
+
+    const goalDetail = await request(app)
+      .get(`/api/goals/${goalRes.body.data.goal.id}`)
+      .set(bHeaders);
+    expect(goalDetail.status).toBe(404);
+
+    const budgetDelete = await request(app)
+      .delete(`/api/budgets/${budgetRes.body.data.budget.id}`)
+      .set(bHeaders);
+    expect(budgetDelete.status).toBe(404);
+
+    const dashboard = await request(app).get('/api/dashboard').set(bHeaders);
+    expect(dashboard.body.data.totals).toEqual({ income: 10, expense: 0, balance: 10 });
+    expect(dashboard.body.data.recentTransactions.map((item) => item.note)).toEqual(['user-b-private']);
+
+    const analytics = await request(app).get('/api/analytics?range=week').set(bHeaders);
+    expect(analytics.body.data.summary).toMatchObject({ income: 10, expense: 0, net: 10 });
   });
 });

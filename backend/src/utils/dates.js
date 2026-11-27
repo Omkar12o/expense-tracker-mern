@@ -37,6 +37,21 @@ function shiftUTC(dateString, days) {
   return date.toISOString().slice(0, 10);
 }
 
+function shiftMonth(monthString, delta) {
+  if (!isValidMonthString(monthString)) return monthString;
+  const [year, month] = monthString.split('-').map(Number);
+  const date = new Date(Date.UTC(year, month - 1 + delta, 1));
+  return date.toISOString().slice(0, 7);
+}
+
+function startOfMonth(monthString) {
+  return `${monthString}-01`;
+}
+
+function daysInMonth(year, month) {
+  return new Date(Date.UTC(year, month, 0)).getUTCDate();
+}
+
 function monthLabel(monthString) {
   if (!isValidMonthString(monthString)) return monthString;
   return new Date(`${monthString}-01T00:00:00.000Z`).toLocaleString('en-US', {
@@ -54,5 +69,8 @@ module.exports = {
   monthKey,
   startOfUTCDay,
   shiftUTC,
+  shiftMonth,
+  startOfMonth,
+  daysInMonth,
   monthLabel,
 };

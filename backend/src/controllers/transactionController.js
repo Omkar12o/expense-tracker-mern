@@ -34,8 +34,8 @@ async function getById(req, res, next) {
 async function create(req, res, next) {
   try {
     const body = { date: todayUTC(), ...req.valid.body };
-    const transaction = await transactionService.create(req.user._id, body);
-    return sendSuccess(res, { transaction }, { status: 201, message: 'Transaction created.' });
+    const result = await transactionService.create(req.user._id, body);
+    return sendSuccess(res, result, { status: 201, message: 'Transaction created.' });
   } catch (error) {
     return next(error);
   }
@@ -43,12 +43,12 @@ async function create(req, res, next) {
 
 async function update(req, res, next) {
   try {
-    const transaction = await transactionService.update(
+    const result = await transactionService.update(
       req.user._id,
       req.valid.params.id,
       req.valid.body,
     );
-    return sendSuccess(res, { transaction }, { message: 'Transaction updated.' });
+    return sendSuccess(res, result, { message: 'Transaction updated.' });
   } catch (error) {
     return next(error);
   }

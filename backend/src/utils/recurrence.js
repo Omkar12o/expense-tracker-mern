@@ -1,8 +1,34 @@
 const AppError = require('./AppError');
-const { startOfUTCDay } = require('./dates');
+const { startOfUTCDay, daysInMonth, shiftUTC } = require('./dates');
 
 function dayOf(dateString) {
   return Number(String(dateString).slice(8, 10));
+}
+
+function pad(value) {
+  return String(value).padStart(2, '0');
+}
+
+function advanceDate(dateString, frequency, anchorDay) {
+  const [year, month] = String(dateString).slice(0, 7).split('-').map(Number);
+  const day = anchorDay || dayOf(dateString);
+
+  if (frequency === 'daily') return shiftUTC(dateString, 1);
+  if (frequency === 'weekly') return shiftUTC(dateString, 7);
+
+  let targetYear = year;
+  let targetMonth = month;
+  if (frequency === 'monthly') {
+    targetYear = month === 12 ? year + 1 : year;
+    targetMonth = month === 12 ? 1 : month + 1;
+  } else if (frequency === 'yearly') {
+    targetYear = year + 1;
+  } else {
+    return shiftUTC(dateString, 1);
+  }
+
+  const safeDay = Math.min(day, daysInMonth(targetYear, targetMonth));
+  return `${targetYear}-${pad(targetMonth)}-${pad(safeDay)}`;
 }
 
 function plainRecurrence(existing) {
@@ -16,7 +42,13 @@ function plainRecurrence(existing) {
   };
 }
 
-function buildRecurrence({ dateString, recurrenceInput, existing = null, isRecurring = false }) {
+function buildRecurrence({
+  dateString,
+  dateChanged = false,
+  recurrenceInput,
+  existing = null,
+  isRecurring = false,
+}) {
   if (!isRecurring) return null;
 
   const previous = plainRecurrence(existing);
@@ -28,15 +60,16 @@ function buildRecurrence({ dateString, recurrenceInput, existing = null, isRecur
     );
   }
 
-  const dateChanged = Boolean(dateString && (!previous || dateString !== previous.nextDate));
   const frequencyChanged = Boolean(
     recurrenceInput?.frequency && (!previous || recurrenceInput.frequency !== previous.frequency),
   );
   const reset = !previous || dateChanged || frequencyChanged;
 
-  const nextDate = recurrenceInput?.nextDate || (reset ? dateString : previous.nextDate);
   const anchorDay =
     recurrenceInput?.anchorDay || (reset ? dayOf(dateString) : previous.anchorDay);
+  const nextDate =
+    recurrenceInput?.nextDate ||
+    (reset ? advanceDate(dateString, frequency, anchorDay) : previous.nextDate);
   const endDate =
     recurrenceInput && Object.prototype.hasOwnProperty.call(recurrenceInput, 'endDate')
       ? recurrenceInput.endDate
@@ -50,4 +83,4 @@ function buildRecurrence({ dateString, recurrenceInput, existing = null, isRecur
   };
 }
 
-module.exports = { buildRecurrence, plainRecurrence };
+module.exports = { advanceDate, buildRecurrence, plainRecurrence };

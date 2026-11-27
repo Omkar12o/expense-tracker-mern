@@ -3,11 +3,13 @@ const accountController = require('../controllers/accountController');
 const { protect } = require('../middleware/auth');
 const validate = require('../middleware/validate');
 const { withAccountDefaults } = require('../middleware/defaults');
+const recurringTrigger = require('../middleware/recurringTrigger');
 const { createAccountSchema, patchAccountSchema, idParamSchema } = require('../validators/account');
 
 const router = express.Router();
 
 router.use(protect);
+router.use(recurringTrigger);
 
 router.get('/', validate(), accountController.list);
 router.post(

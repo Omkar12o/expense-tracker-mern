@@ -1,6 +1,7 @@
 const Transaction = require('../models/Transaction');
 const accountService = require('./accountService');
 const categoryService = require('./categoryService');
+const budgetService = require('./budgetService');
 const AppError = require('../utils/AppError');
 const { buildTransactionFilter } = require('../utils/transactionFilter');
 const { buildRecurrence } = require('../utils/recurrence');
@@ -71,6 +72,7 @@ async function prepare(userId, input, existing = null) {
   const isRecurring = input.isRecurring ?? existing?.isRecurring ?? false;
   const recurrence = buildRecurrence({
     dateString,
+    dateChanged: input.date !== undefined,
     recurrenceInput: input.recurrence === null ? undefined : input.recurrence,
     existing,
     isRecurring,
@@ -91,11 +93,19 @@ async function prepare(userId, input, existing = null) {
   };
 }
 
+async function withAlerts(userId, decorated) {
+  const budgetAlerts =
+    decorated.type === 'expense'
+      ? await budgetService.alertsForExpense(userId, decorated.date, decorated.category)
+      : [];
+  return { transaction: decorated, budgetAlerts };
+}
+
 async function create(userId, body) {
   const { dateString: _dateString, ...fields } = await prepare(userId, body);
   const transaction = await Transaction.create({ ...fields, user: userId });
   const populated = await findOwned(userId, transaction._id);
-  return decorate(populated, await icons(userId));
+  return withAlerts(userId, decorate(populated, await icons(userId)));
 }
 
 async function update(userId, id, patch) {
@@ -104,7 +114,7 @@ async function update(userId, id, patch) {
   Object.assign(transaction, fields);
   await transaction.save();
   const populated = await findOwned(userId, id);
-  return decorate(populated, await icons(userId));
+  return withAlerts(userId, decorate(populated, await icons(userId)));
 }
 
 async function getById(userId, id) {

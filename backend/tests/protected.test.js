@@ -63,6 +63,10 @@ describe('Protected auth routes', () => {
       '/api/transactions/000000000000000000000000',
       '/api/accounts',
       '/api/categories',
+      '/api/budgets',
+      '/api/goals',
+      '/api/analytics',
+      '/api/dashboard',
     ];
     for (const route of routes) {
       const res = await request(app).get(route);

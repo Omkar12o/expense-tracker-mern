@@ -3,6 +3,7 @@ const transactionController = require('../controllers/transactionController');
 const { protect } = require('../middleware/auth');
 const validate = require('../middleware/validate');
 const { withTransactionDefaults } = require('../middleware/defaults');
+const recurringTrigger = require('../middleware/recurringTrigger');
 const {
   createTransactionSchema,
   patchTransactionSchema,
@@ -13,6 +14,7 @@ const {
 const router = express.Router();
 
 router.use(protect);
+router.use(recurringTrigger);
 
 router.get('/', validate({ query: listTransactionsQuerySchema }), transactionController.list);
 router.get('/export', validate({ query: listTransactionsQuerySchema }), transactionController.exportCsv);

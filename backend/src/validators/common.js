@@ -31,6 +31,13 @@ const money = z
   .transform(roundMoney)
   .refine((value) => value >= 0.01, 'Amount must be at least 0.01.');
 
+const nonNegativeMoney = z
+  .number({ invalid_type_error: 'Amount must be a number.' })
+  .finite()
+  .nonnegative('Amount cannot be negative.')
+  .max(1000000000, 'Amount is too large.')
+  .transform(roundMoney);
+
 const amountFilter = z
   .number({ invalid_type_error: 'Amount must be a number.' })
   .finite()
@@ -58,6 +65,7 @@ module.exports = {
   dateString,
   monthString,
   money,
+  nonNegativeMoney,
   amountFilter,
   httpUrl,
   shortText,
