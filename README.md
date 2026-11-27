@@ -29,6 +29,17 @@ Backend folders follow MVC + services: `config`, `models`, `routes`,
 thin; business logic lives in services. Every database query is scoped to the
 authenticated user.
 
+## Client documentation
+
+A complete client-facing handover guide is available in `docs/`:
+
+- `CLIENT_HANDOVER.md` — editable source document
+- `CLIENT_HANDOVER.html` — print-ready version
+- `CLIENT_HANDOVER.pdf` — ready to share with the client
+
+It covers setup, daily usage, screen guides, API reference, security,
+deployment, verification results, and troubleshooting.
+
 ## Local development
 
 Requires Node.js 20+ and either a local MongoDB or MongoDB Atlas URI.

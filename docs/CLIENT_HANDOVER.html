@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Expense Tracker — Client Handover</title>
+<style>
+@page { size: A4; margin: 18mm; }
+* { box-sizing: border-box; }
+body { margin: 0; color: #0f172a; font-family: Inter, "Segoe UI", system-ui, sans-serif; font-size: 10.5pt; line-height: 1.55; }
+h1 { margin: 0 0 18mm; padding: 22mm 0 8mm; border-bottom: 4px solid #0f766e; font-size: 28pt; line-height: 1.15; color: #042f2e; }
+h2 { margin: 12mm 0 4mm; padding-bottom: 2mm; border-bottom: 1px solid #cbd5e1; font-size: 16pt; color: #0f766e; page-break-after: avoid; }
+h3 { margin: 7mm 0 2mm; font-size: 12pt; color: #0f172a; page-break-after: avoid; }
+h4 { margin: 5mm 0 2mm; font-size: 10.5pt; color: #334155; page-break-after: avoid; }
+p, li { orphans: 3; widows: 3; }
+ul, ol { margin: 2mm 0 4mm; padding-left: 7mm; }
+li { margin-bottom: 1.5mm; }
+hr { margin: 8mm 0; border: 0; border-top: 1px solid #e2e8f0; }
+code { padding: 0.5mm 1mm; border-radius: 3px; background: #f1f5f9; color: #0f766e; font-family: "Cascadia Code", Consolas, monospace; font-size: 9pt; }
+pre { margin: 3mm 0 5mm; padding: 4mm; border-radius: 5px; background: #0f172a; color: #e2e8f0; white-space: pre-wrap; word-break: break-word; page-break-inside: avoid; }
+pre code { padding: 0; background: transparent; color: inherit; font-size: 8.6pt; }
+table { width: 100%; margin: 3mm 0 5mm; border-collapse: collapse; font-size: 9pt; page-break-inside: avoid; }
+th, td { padding: 2mm 2.5mm; border: 1px solid #cbd5e1; text-align: left; vertical-align: top; }
+th { background: #ecfdf5; color: #064e3b; font-weight: 700; }
+tr:nth-child(even) td { background: #f8fafc; }
+strong { color: #0f766e; }
+</style>
+</head>
+<body>
+<h1 id="expense-tracker-client-handover-usage-guide">Expense Tracker — Client Handover &amp; Usage Guide</h1>
+<p><strong>Version:</strong> 1.0 <strong>Date:</strong> 27 November 2026 <strong>Audience:</strong> Client, product owner, and future maintainers</p>
+<hr>
+<h2 id="1-executive-summary">1. Executive summary</h2>
+<p>Expense Tracker is a secure, responsive web application for recording income and expenses, managing accounts and categories, setting monthly budgets, tracking savings goals, and reviewing live analytics. Every figure shown in the interface is calculated from the signed-in user&#39;s own transactions. There are no demonstration numbers or hard-coded charts in the application.</p>
+<p>The solution is delivered as a two-project monorepo:</p>
+<ul><li><code>backend/</code> — Express 5 REST API with MongoDB persistence.</li><li><code>frontend/</code> — React 19 single-page application with a mobile-first interface.</li></ul>
+<p>Both projects are prepared for deployment on Vercel. The backend uses a serverless entrypoint; the frontend uses SPA rewrites so deep links work after a page refresh.</p>
+<hr>
+<h2 id="2-technology-stack">2. Technology stack</h2>
+<table><thead><tr><th>Area</th><th>Technology</th><th>Purpose</th></tr></thead><tbody><tr><td>Frontend framework</td><td>React 19</td><td>Component-based user interface</td></tr><tr><td>Build tooling</td><td>Vite 7</td><td>Fast development server and production build</td></tr><tr><td>Routing</td><td>React Router 7</td><td>Public, protected, and not-found routes</td></tr><tr><td>Styling</td><td>Tailwind CSS 4</td><td>Responsive utility-first design system</td></tr><tr><td>HTTP client</td><td>Axios</td><td>API calls with automatic bearer-token header</td></tr><tr><td>Charts</td><td>Recharts</td><td>Trend and category visualisations</td></tr><tr><td>Backend runtime</td><td>Node.js 20+</td><td>JavaScript server runtime</td></tr><tr><td>API framework</td><td>Express 5</td><td>REST routing and middleware pipeline</td></tr><tr><td>Database</td><td>MongoDB with Mongoose 8</td><td>Document persistence and schemas</td></tr><tr><td>Validation</td><td>Zod 3</td><td>Body, query, and parameter validation</td></tr><tr><td>Authentication</td><td>JWT plus bcryptjs</td><td>Signed sessions and password hashing</td></tr><tr><td>Security</td><td>Helmet, CORS allow-list, rate limiting</td><td>HTTP hardening and abuse protection</td></tr><tr><td>Testing</td><td>Jest, Supertest, Vitest, Testing Library</td><td>API and UI regression coverage</td></tr><tr><td>Hosting</td><td>Vercel</td><td>Serverless API and static SPA delivery</td></tr></tbody></table>
+<hr>
+<h2 id="3-repository-structure">3. Repository structure</h2>
+<pre><code>expense-tracker/
+├── backend/
+│   ├── api/              Vercel serverless entrypoint
+│   ├── src/
+│   │   ├── config/       Environment, database, and constants
+│   │   ├── models/       Mongoose schemas and model logic
+│   │   ├── routes/       Express route definitions
+│   │   ├── controllers/  Thin HTTP controllers
+│   │   ├── services/     Business logic and calculations
+│   │   ├── middleware/   Auth, validation, sanitising, limits, cron auth
+│   │   ├── validators/   Zod schemas
+│   │   └── utils/        Shared helpers and response formatters
+│   └── tests/            API integration tests
+└── frontend/
+    ├── src/
+    │   ├── api/          Typed API client modules
+    │   ├── components/   Auth, layout, dashboard, and UI components
+    │   ├── context/      Auth and toast providers
+    │   ├── hooks/        Reusable data-fetching hook
+    │   ├── pages/        Route screens
+    │   ├── routes/       Route guards
+    │   └── utils/        Date and currency helpers
+    └── src/test/         UI tests</code></pre>
+<p>Controllers only read validated data from <code>req.valid</code>. Business rules live in services. Every database query is scoped to <code>req.user._id</code>, so a user can never read or modify another user&#39;s records.</p>
+<hr>
+<h2 id="4-local-quick-start">4. Local quick start</h2>
+<h3 id="4-1-requirements">4.1 Requirements</h3>
+<ul><li>Node.js 20 or newer</li><li>npm 10 or newer</li><li>A MongoDB connection: local MongoDB or MongoDB Atlas</li><li>Two terminals</li></ul>
+<h3 id="4-2-backend">4.2 Backend</h3>
+<pre><code>cd backend
+npm install
+Copy-Item .env.example .env</code></pre>
+<p>Edit <code>backend/.env</code> and set at least:</p>
+<pre><code>MONGO_URI=mongodb://127.0.0.1:27017/expense-tracker
+JWT_SECRET=replace-with-a-random-secret-at-least-32-characters
+CRON_SECRET=replace-with-a-random-cron-secret-at-least-32-characters
+CLIENT_URL=http://localhost:5173</code></pre>
+<p>Start the API:</p>
+<pre><code>npm run dev</code></pre>
+<p>The API is available at <code>http://localhost:4000/api</code>. The health check is at <code>http://localhost:4000/health</code>.</p>
+<h3 id="4-3-frontend">4.3 Frontend</h3>
+<p>In a second terminal:</p>
+<pre><code>cd frontend
+npm install
+Copy-Item .env.example .env.local
+npm run dev</code></pre>
+<p>Open <code>http://localhost:5173</code>.</p>
+<p><code>frontend/.env.local</code> should contain:</p>
+<pre><code>VITE_API_URL=http://localhost:4000/api
+VITE_CURRENCY=$</code></pre>
+<h3 id="4-4-demo-account">4.4 Demo account</h3>
+<p>For local evaluation only, a demo account can be created with:</p>
+<pre><code>Email:    smoke@example.com
+Password: Password1231</code></pre>
+<p>This account belongs to the local database only. In production, users should register their own accounts.</p>
+<hr>
+<h2 id="5-how-to-use-the-application">5. How to use the application</h2>
+<h3 id="5-1-create-an-account">5.1 Create an account</h3>
+<ol><li>Open <code>http://localhost:5173/register</code>.</li><li>Enter your name, email, and a password of at least eight characters containing a letter and a number.</li><li>Select <strong>Create account</strong>.</li><li>You will be signed in automatically and taken to the dashboard.</li></ol>
+<h3 id="5-2-sign-in-and-sign-out">5.2 Sign in and sign out</h3>
+<ol><li>Open <code>http://localhost:5173/login</code>.</li><li>Enter your email and password.</li><li>Select <strong>Sign in</strong>.</li><li>Use the profile menu in the top navigation to sign out.</li></ol>
+<p>If a session expires, the login screen displays a session-ended notice and returns you to your original page after signing in again.</p>
+<h3 id="5-3-set-up-accounts">5.3 Set up accounts</h3>
+<p>Accounts are the funding sources used by transactions.</p>
+<ol><li>Go to <strong>Accounts</strong>.</li><li>Add accounts such as Cash, Bank Account, Wallet, Credit Card, or Savings.</li><li>Enter an optional starting balance.</li><li>The displayed balance is calculated as: starting balance plus income minus expenses.</li></ol>
+<p>An account that has transactions cannot be deleted, which protects historical records.</p>
+<h3 id="5-4-add-categories">5.4 Add categories</h3>
+<p>Categories organise transactions and budgets.</p>
+<ol><li>Go to <strong>Categories</strong>.</li><li>Built-in expense and income categories are already available.</li><li>Select <strong>Add category</strong> to create your own.</li><li>Custom categories can be removed when they are no longer used.</li></ol>
+<h3 id="5-5-record-transactions">5.5 Record transactions</h3>
+<ol><li>Go to <strong>Transactions</strong> and select <strong>Add transaction</strong>.</li><li>Choose income or expense.</li><li>Enter the amount, category, account, and UTC calendar date.</li><li>Add an optional note or HTTP(S) attachment link.</li><li>For recurring entries, enable recurrence and choose daily, weekly, monthly, or yearly.</li><li>Save the transaction.</li></ol>
+<p>Amounts are rounded to two decimal places. Dates use the <code>YYYY-MM-DD</code> UTC format so totals remain consistent across time zones.</p>
+<h3 id="5-6-search-filter-and-export">5.6 Search, filter, and export</h3>
+<p>The Transactions screen supports:</p>
+<ul><li>text search across notes and categories</li><li>income or expense type</li><li>category and account</li><li>date range</li><li>minimum and maximum amount</li><li>recurring or one-time records</li><li>pagination with filtered totals</li></ul>
+<p>Select <strong>Export CSV</strong> to download the current filtered result set. The export is escaped against spreadsheet formula injection.</p>
+<h3 id="5-7-manage-budgets">5.7 Manage budgets</h3>
+<ol><li>Go to <strong>Budgets</strong>.</li><li>Select the month.</li><li>Set an overall monthly limit and, optionally, per-category limits.</li><li>Spending is calculated from transactions for that month.</li><li>The interface shows ok, warning, high, critical, and exceeded states.</li></ol>
+<p>Budgets carry forward when a month has no explicit value, so repeated setup is unnecessary.</p>
+<h3 id="5-8-track-goals">5.8 Track goals</h3>
+<ol><li>Go to <strong>Goals</strong> and select <strong>Add goal</strong>.</li><li>Enter a name, target amount, optional starting amount, and optional target date.</li><li>Use <strong>Contribute</strong> to add money or a negative amount to withdraw.</li><li>Progress is calculated from the target and current amounts.</li></ol>
+<h3 id="5-9-review-analytics">5.9 Review analytics</h3>
+<ol><li>Go to <strong>Analytics</strong>.</li><li>Choose a range: week, month, three months, or year.</li><li>Review the income and expense trend and category breakdown.</li><li>Go to <strong>Dashboard</strong> for a current-month snapshot, recent transactions, accounts, and budget status.</li></ol>
+<p>All charts are generated by the API from stored transactions.</p>
+<hr>
+<h2 id="6-screen-guide">6. Screen guide</h2>
+<table><thead><tr><th>Screen</th><th>Route</th><th>What it provides</th></tr></thead><tbody><tr><td>Login</td><td><code>/login</code></td><td>Secure sign-in with password visibility control</td></tr><tr><td>Register</td><td><code>/register</code></td><td>New account creation</td></tr><tr><td>Dashboard</td><td><code>/dashboard</code></td><td>Totals, trend, recent activity, accounts, budget status</td></tr><tr><td>Transactions</td><td><code>/transactions</code></td><td>CRUD, filters, search, pagination, CSV export</td></tr><tr><td>Analytics</td><td><code>/analytics</code></td><td>Date-range trends and category breakdown</td></tr><tr><td>Accounts</td><td><code>/accounts</code></td><td>Funding sources and calculated balances</td></tr><tr><td>Categories</td><td><code>/categories</code></td><td>Built-in and custom categories</td></tr><tr><td>Budgets</td><td><code>/budgets</code></td><td>Monthly overall and category limits with alerts</td></tr><tr><td>Goals</td><td><code>/goals</code></td><td>Savings targets, contributions, and withdrawals</td></tr></tbody></table>
+<p>Every data screen includes loading, empty, and error states. The interface follows the operating system light or dark preference and is usable on phones, tablets, and desktops.</p>
+<hr>
+<h2 id="7-api-reference">7. API reference</h2>
+<h3 id="7-1-conventions">7.1 Conventions</h3>
+<p>All application endpoints are prefixed with <code>/api</code>. Health is available at <code>/health</code>.</p>
+<p>Protected endpoints require:</p>
+<pre><code>Authorization: Bearer &lt;jwt&gt;</code></pre>
+<p>Successful responses follow this shape:</p>
+<pre><code>{
+  &quot;success&quot;: true,
+  &quot;data&quot;: {},
+  &quot;message&quot;: &quot;Optional human-readable message&quot;
+}</code></pre>
+<p>Errors follow this shape:</p>
+<pre><code>{
+  &quot;success&quot;: false,
+  &quot;error&quot;: {
+    &quot;code&quot;: &quot;ERROR_CODE&quot;,
+    &quot;message&quot;: &quot;Human-readable message&quot;,
+    &quot;details&quot;: {}
+  }
+}</code></pre>
+<h3 id="7-2-endpoints">7.2 Endpoints</h3>
+<table><thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead><tbody><tr><td>GET</td><td><code>/health</code></td><td>Service health check</td><td>No</td></tr><tr><td>POST</td><td><code>/api/auth/register</code></td><td>Create an account</td><td>No</td></tr><tr><td>POST</td><td><code>/api/auth/login</code></td><td>Sign in and receive a JWT</td><td>No</td></tr><tr><td>GET</td><td><code>/api/auth/me</code></td><td>Restore the current user</td><td>Yes</td></tr><tr><td>POST</td><td><code>/api/auth/logout</code></td><td>Client-side session termination hook</td><td>Yes</td></tr><tr><td>GET</td><td><code>/api/transactions</code></td><td>List filtered transactions</td><td>Yes</td></tr><tr><td>GET</td><td><code>/api/transactions/export</code></td><td>Export filtered CSV</td><td>Yes</td></tr><tr><td>GET</td><td><code>/api/transactions/:id</code></td><td>Get one transaction</td><td>Yes</td></tr><tr><td>POST</td><td><code>/api/transactions</code></td><td>Create a transaction</td><td>Yes</td></tr><tr><td>PATCH</td><td><code>/api/transactions/:id</code></td><td>Update a transaction</td><td>Yes</td></tr><tr><td>DELETE</td><td><code>/api/transactions/:id</code></td><td>Delete a transaction</td><td>Yes</td></tr><tr><td>GET</td><td><code>/api/accounts</code></td><td>List accounts</td><td>Yes</td></tr><tr><td>POST</td><td><code>/api/accounts</code></td><td>Create an account</td><td>Yes</td></tr><tr><td>PATCH</td><td><code>/api/accounts/:id</code></td><td>Update an account</td><td>Yes</td></tr><tr><td>DELETE</td><td><code>/api/accounts/:id</code></td><td>Delete an unused account</td><td>Yes</td></tr><tr><td>GET</td><td><code>/api/categories</code></td><td>List categories</td><td>Yes</td></tr><tr><td>POST</td><td><code>/api/categories</code></td><td>Create a category</td><td>Yes</td></tr><tr><td>DELETE</td><td><code>/api/categories/:id</code></td><td>Delete an unused custom category</td><td>Yes</td></tr><tr><td>GET</td><td><code>/api/budgets?month=YYYY-MM</code></td><td>List budgets and status</td><td>Yes</td></tr><tr><td>PUT</td><td><code>/api/budgets</code></td><td>Create or update a budget</td><td>Yes</td></tr><tr><td>DELETE</td><td><code>/api/budgets/:id</code></td><td>Delete a budget</td><td>Yes</td></tr><tr><td>GET</td><td><code>/api/goals</code></td><td>List goals</td><td>Yes</td></tr><tr><td>POST</td><td><code>/api/goals</code></td><td>Create a goal</td><td>Yes</td></tr><tr><td>PATCH</td><td><code>/api/goals/:id</code></td><td>Update a goal</td><td>Yes</td></tr><tr><td>POST</td><td><code>/api/goals/:id/contribute</code></td><td>Add or withdraw goal funds</td><td>Yes</td></tr><tr><td>DELETE</td><td><code>/api/goals/:id</code></td><td>Delete a goal</td><td>Yes</td></tr><tr><td>GET</td><td><code>/api/analytics?range=month</code></td><td>Trend and category analytics</td><td>Yes</td></tr><tr><td>GET</td><td><code>/api/dashboard</code></td><td>Dashboard snapshot</td><td>Yes</td></tr><tr><td>GET, POST</td><td><code>/api/cron/recurring</code></td><td>Process due recurring entries</td><td>Cron secret</td></tr></tbody></table>
+<h3 id="7-3-request-examples">7.3 Request examples</h3>
+<p>Register:</p>
+<pre><code>{
+  &quot;name&quot;: &quot;Client User&quot;,
+  &quot;email&quot;: &quot;client@example.com&quot;,
+  &quot;password&quot;: &quot;Password123&quot;
+}</code></pre>
+<p>Create a transaction:</p>
+<pre><code>{
+  &quot;type&quot;: &quot;expense&quot;,
+  &quot;amount&quot;: 18.75,
+  &quot;category&quot;: &quot;Food&quot;,
+  &quot;account&quot;: &quot;65a1b2c3d4e5f60718293a4b&quot;,
+  &quot;date&quot;: &quot;2026-11-27&quot;,
+  &quot;note&quot;: &quot;Team lunch&quot;,
+  &quot;isRecurring&quot;: false
+}</code></pre>
+<p>Set a monthly category budget:</p>
+<pre><code>{
+  &quot;month&quot;: &quot;2026-11&quot;,
+  &quot;category&quot;: &quot;Food&quot;,
+  &quot;amount&quot;: 500
+}</code></pre>
+<p>Contribute to a goal:</p>
+<pre><code>{
+  &quot;amount&quot;: 250
+}</code></pre>
+<p>A negative contribution withdraws from the goal.</p>
+<hr>
+<h2 id="8-environment-variables">8. Environment variables</h2>
+<table><thead><tr><th>Variable</th><th>Project</th><th>Purpose</th></tr></thead><tbody><tr><td><code>NODE_ENV</code></td><td>backend</td><td>Runtime mode</td></tr><tr><td><code>PORT</code></td><td>backend</td><td>Local API port, default <code>4000</code></td></tr><tr><td><code>MONGO_URI</code></td><td>backend</td><td>MongoDB connection string</td></tr><tr><td><code>JWT_SECRET</code></td><td>backend</td><td>Token signing secret, 32+ characters in production</td></tr><tr><td><code>JWT_EXPIRES_IN</code></td><td>backend</td><td>Token lifetime, for example <code>7d</code></td></tr><tr><td><code>CLIENT_URL</code></td><td>backend</td><td>Comma-separated allowed frontend origins</td></tr><tr><td><code>BCRYPT_ROUNDS</code></td><td>backend</td><td>Password hashing cost, minimum <code>12</code> in production</td></tr><tr><td><code>AUTH_RATE_LIMIT_MAX</code></td><td>backend</td><td>Auth requests per rate-limit window</td></tr><tr><td><code>API_RATE_LIMIT_MAX</code></td><td>backend</td><td>General API requests per window</td></tr><tr><td><code>CURRENCY_SYMBOL</code></td><td>backend</td><td>Currency symbol in server messages</td></tr><tr><td><code>CRON_SECRET</code></td><td>backend</td><td>Bearer secret for the recurring cron endpoint</td></tr><tr><td><code>VITE_API_URL</code></td><td>frontend</td><td>Backend API base URL</td></tr><tr><td><code>VITE_CURRENCY</code></td><td>frontend</td><td>Currency symbol displayed in the UI</td></tr></tbody></table>
+<p>Only <code>.env.example</code> files are stored in the repository. Real <code>.env</code> and <code>.env.local</code> files must never be committed.</p>
+<hr>
+<h2 id="9-security-and-privacy">9. Security and privacy</h2>
+<ul><li>Passwords are hashed with bcrypt using at least twelve rounds in production.</li><li>JSON Web Tokens carry an expiry and are verified on every protected request.</li><li>Authentication and general API routes are rate limited.</li><li>Helmet security headers and a strict CORS allow-list are enabled.</li><li>Request bodies are limited to 256 KB.</li><li>All bodies, queries, and parameters are validated with Zod; unknown fields are removed.</li><li>Free text is stripped of HTML, and regular-expression input is escaped.</li><li>Keys beginning with <code>$</code> or containing <code>.</code> are rejected or stripped before MongoDB access.</li><li>All database queries are scoped to the authenticated user; other users&#39; records return <code>404</code>.</li><li>The recurring job requires a separate cron bearer secret.</li><li>Production startup fails if JWT or cron secrets are missing or too weak.</li></ul>
+<p>The frontend stores the session token in browser <code>localStorage</code> under <code>expense-tracker-token</code>. Logging out clears the stored session.</p>
+<hr>
+<h2 id="10-deployment">10. Deployment</h2>
+<h3 id="10-1-mongodb-atlas">10.1 MongoDB Atlas</h3>
+<ol><li>Create a MongoDB Atlas cluster.</li><li>Create a least-privilege database user with <code>readWrite</code> access to the expense tracker database.</li><li>Allow Vercel egress in Network Access.</li><li>Copy the SRV connection string and substitute the database user password.</li></ol>
+<h3 id="10-2-backend-on-vercel">10.2 Backend on Vercel</h3>
+<p>Deploy the backend first with project root <code>backend</code>. Set the environment variables listed in section 8. Use <code>backend/api/index.js</code> as the serverless entrypoint.</p>
+<p>After the first deployment, synchronise indexes once:</p>
+<pre><code>cd backend
+$env:MONGO_URI = &quot;mongodb+srv://...&quot;
+npm run sync:indexes</code></pre>
+<p>Configure a daily cron request to <code>GET /api/cron/recurring</code> with:</p>
+<pre><code>Authorization: Bearer &lt;CRON_SECRET&gt;</code></pre>
+<h3 id="10-3-frontend-on-vercel">10.3 Frontend on Vercel</h3>
+<p>Deploy the frontend with project root <code>frontend</code>. Vercel detects Vite automatically and builds with <code>npm run build</code>. Set:</p>
+<pre><code>VITE_API_URL=https://your-backend.vercel.app/api
+VITE_CURRENCY=$</code></pre>
+<p><code>frontend/vercel.json</code> rewrites unknown paths to <code>/index.html</code>, so routes such as <code>/transactions</code> work on direct access and refresh.</p>
+<h3 id="10-4-cors-finalisation">10.4 CORS finalisation</h3>
+<p>Add the deployed frontend origin to the backend <code>CLIENT_URL</code>, with no trailing slash, then redeploy the backend. Multiple origins may be separated by commas.</p>
+<h3 id="10-5-publication-status">10.5 Publication status</h3>
+<p>The code and configuration are deployment-ready. Publishing to a live Vercel domain requires client-owned Vercel access and the MongoDB Atlas connection string.</p>
+<hr>
+<h2 id="11-verification-and-quality">11. Verification and quality</h2>
+<h3 id="11-1-commands">11.1 Commands</h3>
+<pre><code>cd backend
+npm run lint
+npm test
+npm run test:coverage</code></pre>
+<pre><code>cd frontend
+npm run lint
+npm test
+npm run build</code></pre>
+<h3 id="11-2-latest-verified-results">11.2 Latest verified results</h3>
+<table><thead><tr><th>Check</th><th>Result</th></tr></thead><tbody><tr><td>Backend lint</td><td>Clean</td></tr><tr><td>Backend tests</td><td>37 of 37 passed</td></tr><tr><td>Backend line coverage</td><td>91.13 percent</td></tr><tr><td>Backend service coverage</td><td>94.87 percent</td></tr><tr><td>Frontend lint</td><td>Clean</td></tr><tr><td>Frontend tests</td><td>31 of 31 passed</td></tr><tr><td>Frontend production build</td><td>Successful, no chunk-size warning</td></tr><tr><td>Backend file-size rule</td><td>No source file exceeds 250 lines</td></tr><tr><td>Frontend component rule</td><td>No component exceeds 200 lines</td></tr></tbody></table>
+<hr>
+<h2 id="12-troubleshooting">12. Troubleshooting</h2>
+<table><thead><tr><th>Symptom</th><th>Likely cause</th><th>Resolution</th></tr></thead><tbody><tr><td>Invalid email or password</td><td>Wrong credentials or wrong account</td><td>Confirm the exact registered email and password</td></tr><tr><td><code>ORIGIN_NOT_ALLOWED</code></td><td>Frontend origin missing from <code>CLIENT_URL</code></td><td>Add the exact origin without a trailing slash and redeploy the backend</td></tr><tr><td><code>401 Unauthorized</code></td><td>Missing or expired token</td><td>Sign in again; confirm the bearer header is sent</td></tr><tr><td>Empty charts</td><td>No transactions in the selected range</td><td>Add transactions or choose a wider range</td></tr><tr><td>Deep link returns 404 on refresh</td><td>SPA rewrite missing</td><td>Confirm <code>frontend/vercel.json</code> is deployed with the frontend</td></tr><tr><td>Recurring entries not generated</td><td>Cron secret or trigger not configured</td><td>Check the cron request and <code>CRON_SECRET</code></td></tr><tr><td>MongoDB connection failed</td><td>Invalid URI or network access</td><td>Verify <code>MONGO_URI</code>, database user, and Atlas network rules</td></tr><tr><td>HTTP 429</td><td>Rate limit reached</td><td>Wait for the window to reset or raise the configured limit</td></tr></tbody></table>
+<hr>
+<h2 id="13-maintenance-recommendations">13. Maintenance recommendations</h2>
+<ul><li>Keep dependency versions patched and review audit output regularly.</li><li>Rotate <code>JWT_SECRET</code> and <code>CRON_SECRET</code> when team access changes.</li><li>Back up the MongoDB database on the provider&#39;s recommended schedule.</li><li>Monitor API logs for repeated validation, authentication, or rate-limit failures.</li><li>Re-run the verification commands in section 11 before every production release.</li><li>If traffic grows, move rate-limit counters from process memory to a shared store such as Redis or MongoDB.</li></ul>
+<hr>
+<h2 id="14-support-smoke-test">14. Support smoke test</h2>
+<p>After deployment, confirm the API before testing the interface:</p>
+<pre><code>$api = &quot;https://your-backend.vercel.app/api&quot;
+Invoke-RestMethod -Uri &quot;$api/health&quot;</code></pre>
+<p>Then open the frontend, register a test account, add an account and a transaction, set a budget, create a goal, and confirm that analytics match the entered transaction. Finally, refresh <code>/transactions</code> directly to confirm the SPA rewrite is active.</p>
+</body>
+</html>
