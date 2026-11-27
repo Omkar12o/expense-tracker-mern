@@ -1,4 +1,5 @@
 const express = require('express');
+const healthController = require('../controllers/healthController');
 const authRoutes = require('./auth');
 const transactionRoutes = require('./transactions');
 const accountRoutes = require('./accounts');
@@ -10,6 +11,8 @@ const dashboardRoutes = require('./dashboard');
 const cronRoutes = require('./cron');
 
 const router = express.Router();
+
+router.get('/health', healthController.check);
 
 router.use('/auth', authRoutes);
 router.use('/cron', cronRoutes);

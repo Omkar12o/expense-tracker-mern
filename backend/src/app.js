@@ -3,6 +3,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const { env } = require('./config/env');
+const healthController = require('./controllers/healthController');
 const routes = require('./routes');
 const sanitize = require('./middleware/sanitize');
 const { apiLimiter } = require('./middleware/rateLimiters');
@@ -34,9 +35,7 @@ app.use(sanitize);
 
 if (env.NODE_ENV !== 'test') app.use(morgan('combined'));
 
-app.get('/health', (_req, res) => {
-  res.status(200).json({ success: true, status: 'ok', data: { status: 'ok' } });
-});
+app.get('/health', healthController.check);
 
 app.use('/api', apiLimiter, routes);
 

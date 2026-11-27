@@ -42,7 +42,8 @@ MONGO_URI='mongodb+srv://...' npm run sync:indexes
 ```bash
 BACKEND=https://your-backend.vercel.app/api
 
-curl -s "$BACKEND/health"
+curl -s "$BACKEND/health"          # https://<backend-domain>/api/health
+curl -s "https://your-backend.vercel.app/health"  # root-level alias
 curl -s -X POST "$BACKEND/auth/register" -H 'Content-Type: application/json' \
   -d '{"name":"Smoke User","email":"smoke@example.com","password":"Password123!"}'
 
