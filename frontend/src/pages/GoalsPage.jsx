@@ -82,8 +82,8 @@ export default function GoalsPage() {
       {header}
       <div className="space-y-6">
         <div className="grid gap-4 sm:grid-cols-3">
-          <Card><CardBody><p className="text-sm text-slate-500 dark:text-slate-400">Total saved</p><p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">{currency(saved)}</p></CardBody></Card>
-          <Card><CardBody><p className="text-sm text-slate-500 dark:text-slate-400">Combined target</p><p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">{currency(targets)}</p></CardBody></Card>
+          <Card><CardBody><p className="text-sm text-slate-500 dark:text-slate-400">Total saved</p><p className="mt-1 truncate text-2xl font-bold text-slate-900 dark:text-slate-100">{currency(saved)}</p></CardBody></Card>
+          <Card><CardBody><p className="text-sm text-slate-500 dark:text-slate-400">Combined target</p><p className="mt-1 truncate text-2xl font-bold text-slate-900 dark:text-slate-100">{currency(targets)}</p></CardBody></Card>
           <Card><CardBody><p className="text-sm text-slate-500 dark:text-slate-400">Completed</p><p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">{completed} of {items.length}</p></CardBody></Card>
         </div>
 

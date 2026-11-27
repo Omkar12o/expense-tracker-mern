@@ -23,10 +23,10 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
-        <Logo />
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-2 px-4 sm:gap-4 sm:px-6 lg:px-8">
+        <Logo compactOnMobile />
 
-        <nav className="ml-6 hidden flex-1 items-center gap-1 lg:flex" aria-label="Primary navigation">
+        <nav className="ml-6 hidden flex-1 items-center gap-1 xl:flex" aria-label="Primary navigation">
           {navItems.map((item) => (
             <NavLink key={item.to} to={item.to} className={navClass}>
               <Icon name={item.icon} className="h-4 w-4" />
@@ -35,7 +35,7 @@ export default function Header() {
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-3">
+        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
           <div className="hidden items-center gap-2 sm:flex">
             <span
               className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-200 text-xs font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-200"
@@ -50,7 +50,7 @@ export default function Header() {
           <button
             type="button"
             onClick={logout}
-            className="flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+            className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-xl px-2 text-sm font-medium text-slate-600 hover:bg-slate-100 sm:px-3 dark:text-slate-300 dark:hover:bg-slate-800"
             aria-label="Sign out"
           >
             <Icon name="logout" className="h-5 w-5" />

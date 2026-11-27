@@ -38,7 +38,7 @@ function CategoryCell({ item }) {
       <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-base dark:bg-slate-800" aria-hidden="true">
         {item.categoryIcon || (item.type === 'income' ? '💰' : '📦')}
       </span>
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">{item.category}</p>
         <p className="truncate text-xs text-slate-500 dark:text-slate-400">{item.note || '—'}</p>
       </div>
@@ -49,8 +49,8 @@ function CategoryCell({ item }) {
 export default function TransactionList({ items = [], onEdit, onDelete }) {
   return (
     <>
-      <div className="hidden overflow-x-auto md:block">
-        <table className="w-full text-left text-sm">
+      <div className="hidden min-w-0 overflow-x-auto md:block">
+        <table className="w-full min-w-[640px] text-left text-sm">
           <thead className="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500 dark:border-slate-800 dark:text-slate-400">
             <tr>
               <th scope="col" className="px-5 py-3 font-semibold">Category</th>
@@ -90,15 +90,17 @@ export default function TransactionList({ items = [], onEdit, onDelete }) {
           <li key={item.id} className="space-y-3 p-4">
             <div className="flex items-start gap-3">
               <CategoryCell item={item} />
-              <span className={`ml-auto whitespace-nowrap text-sm font-semibold ${amountClass(item.type)}`}>
+              <span className={`shrink-0 whitespace-nowrap text-sm font-semibold ${amountClass(item.type)}`}>
                 {signedCurrency(item.type, item.amount)}
               </span>
             </div>
             <div className="flex items-center justify-between gap-2 pl-12">
-              <span className="text-xs text-slate-500 dark:text-slate-400">
+              <span className="min-w-0 flex-1 truncate text-[11px] text-slate-500 sm:text-xs dark:text-slate-400">
                 {formatDate(item.date)} · {item.account?.name || '—'}
               </span>
-              <Actions item={item} onEdit={onEdit} onDelete={onDelete} />
+              <div className="shrink-0">
+                <Actions item={item} onEdit={onEdit} onDelete={onDelete} />
+              </div>
             </div>
           </li>
         ))}

@@ -16,7 +16,7 @@ export default function StatCard({ label, value, hint, icon, tone = 'teal' }) {
           <p className="mt-2 truncate text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
             {value}
           </p>
-          {hint && <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{hint}</p>}
+          {hint && <p className="mt-1 break-words text-xs text-slate-500 dark:text-slate-400">{hint}</p>}
         </div>
         <span className={`rounded-xl p-2.5 ${tones[tone] || tones.teal}`}>
           <Icon name={icon} className="h-5 w-5" />

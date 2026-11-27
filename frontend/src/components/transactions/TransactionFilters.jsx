@@ -94,7 +94,7 @@ export default function TransactionFilters({
       </div>
 
       <details className="rounded-xl border border-slate-200 p-4 dark:border-slate-800">
-        <summary className="cursor-pointer text-sm font-semibold text-slate-700 dark:text-slate-200">
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-slate-700 dark:text-slate-200">
           More filters
         </summary>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -122,10 +122,16 @@ export default function TransactionFilters({
       </details>
 
       <div className="flex flex-wrap gap-2">
-        <Button variant="secondary" size="sm" onClick={reset}>
+        <Button variant="secondary" size="sm" onClick={reset} className="w-full sm:w-auto">
           Clear filters
         </Button>
-        <Button variant="secondary" size="sm" onClick={onExport} loading={exporting}>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={onExport}
+          loading={exporting}
+          className="w-full sm:w-auto"
+        >
           <Icon name="download" className="h-4 w-4" />
           Export CSV
         </Button>
