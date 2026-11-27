@@ -72,7 +72,7 @@ export default function GoalsPage() {
     );
   }
 
-  const items = list.data?.data || [];
+  const items = list.data || [];
   const saved = items.reduce((sum, item) => sum + Number(item.currentAmount || 0), 0);
   const targets = items.reduce((sum, item) => sum + Number(item.targetAmount || 0), 0);
   const completed = items.filter((item) => item.completed).length;

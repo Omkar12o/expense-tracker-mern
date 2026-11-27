@@ -100,7 +100,7 @@ export default function BudgetsPage() {
                 id="budget-month"
                 type="month"
                 value={month}
-                onChange={(event) => setMonth(event.target.value)}
+                onChange={(event) => setMonth(event.target.value || currentMonth())}
                 className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
               />
             </div>

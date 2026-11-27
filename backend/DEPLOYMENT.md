@@ -18,7 +18,7 @@ vercel env add MONGO_URI production
 vercel env add JWT_SECRET production       # 32+ random chars
 vercel env add JWT_EXPIRES_IN production   # 7d
 vercel env add CLIENT_URL production       # frontend URL, no trailing slash
-vercel env add BCRYPT_ROUNDS production     # 10 (cold-start friendly)
+vercel env add BCRYPT_ROUNDS production     # 12 (minimum in production)
 vercel env add AUTH_RATE_LIMIT_MAX production # 20
 vercel env add API_RATE_LIMIT_MAX production  # 1000
 vercel env add CURRENCY_SYMBOL production  # $
@@ -57,5 +57,6 @@ head -1 export.csv   # Date,Type,Category,Account,Amount,Note
 - No `setInterval` in the API app; recurring work is triggered by access, the daily Vercel cron, and a local-only timer in `server.js`.
 - No persistent disk; attachments are validated http(s) links only.
 - Rate-limit counters are in memory and therefore per serverless instance. Upgrade path: store counters in MongoDB/Redis with a shared key.
-- Cold starts are reduced with `BCRYPT_ROUNDS=10` and `maxPoolSize: 5`.
+- Password hashing uses at least 12 bcrypt rounds in production; database
+  connections are pooled with `maxPoolSize: 5` to limit cold-start overhead.
 - Mongoose connection and promise are cached on `globalThis` for warm invocations.

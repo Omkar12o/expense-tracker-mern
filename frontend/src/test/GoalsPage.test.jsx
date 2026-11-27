@@ -27,19 +27,17 @@ vi.mock('../context/ToastContext', () => ({
   useToast: () => ({ success: mocks.success, error: mocks.error, info: vi.fn(), warning: vi.fn() }),
 }));
 
-const goals = {
-  data: [
-    {
-      id: 'goal-1',
-      name: 'Emergency fund',
-      targetAmount: 1000,
-      currentAmount: 250,
-      targetDate: '2026-12-31',
-      progress: 25,
-      completed: false,
-    },
-  ],
-};
+const goals = [
+  {
+    id: 'goal-1',
+    name: 'Emergency fund',
+    targetAmount: 1000,
+    currentAmount: 250,
+    targetDate: '2026-12-31',
+    progress: 25,
+    completed: false,
+  },
+];
 
 describe('GoalsPage', () => {
   beforeEach(() => {
@@ -85,7 +83,7 @@ describe('GoalsPage', () => {
   });
 
   it('shows an empty state when no goals exist', async () => {
-    mocks.list.mockResolvedValue({ data: [] });
+    mocks.list.mockResolvedValue([]);
     render(<GoalsPage />);
 
     expect(await screen.findByText('No goals yet')).toBeInTheDocument();
