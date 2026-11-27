@@ -6,18 +6,11 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import TransactionsPage from './pages/TransactionsPage';
+import AnalyticsPage from './pages/AnalyticsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import PlaceholderPage from './pages/PlaceholderPage';
 
 const screens = [
-  {
-    path: 'analytics',
-    title: 'Analytics',
-    description: 'See where your money goes over time.',
-    icon: '📈',
-    emptyTitle: 'No analytics yet',
-    emptyDescription: 'Analytics are calculated from your own transactions.',
-  },
   {
     path: 'budgets',
     title: 'Budgets',
@@ -66,6 +59,7 @@ export default function App() {
         <Route element={<AppShell />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/transactions" element={<TransactionsPage />} />
+          <Route path="/analytics" element={<AnalyticsPage />} />
           {screens.map((screen) => (
             <Route
               key={screen.path}
